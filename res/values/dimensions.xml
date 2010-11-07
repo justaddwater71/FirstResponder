@@ -9,8 +9,10 @@
     <dimen name="vert_button_margin">3sp</dimen>
     <dimen name="edit_text_padding">2sp</dimen>
     <dimen name="edit_text_margin">3sp</dimen>
-    <dimen name="edit_text_text_size">30px</dimen>
+    <dimen name="edit_text_text_size">20px</dimen>
     <dimen name="listview_text_size">20px</dimen>
     <dimen name="listview_margin">3sp</dimen>
     <dimen name="listview_row_padding">7sp</dimen>
+    <dimen name="option_table_text_size">25px</dimen>
+    <dimen name="login_box_text_size">30px</dimen>
 </resources>

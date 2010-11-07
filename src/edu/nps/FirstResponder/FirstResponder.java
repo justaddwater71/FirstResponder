@@ -15,11 +15,13 @@ import android.widget.EditText;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.MediaController;
+import android.widget.RelativeLayout;
 import android.widget.TabHost;
 import android.widget.TableLayout;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 import android.widget.VideoView;
+import android.widget.ViewFlipper;
 import android.widget.TabHost.TabSpec;
 
 public class FirstResponder extends TabActivity 
@@ -46,12 +48,23 @@ public class FirstResponder extends TabActivity
 	
 	TabHost						myTabHost;
 	
-	//Login Tab Data Members
-	TabSpec						loginTabSpec;
+//Login/Option Tab Data Members
+	
+	//Login Layout
+	TabSpec						loginOptionTabSpec;
+	ViewFlipper				loginOptionViewFlipper;
+	RelativeLayout			loginLayout;
+	RelativeLayout			optionLayout;
 	EditText 						username;
 	EditText 						password;
 	Button 						loginButton;
 	Button 						optionsButton;
+	
+	//Option Layout Data Members
+	ToggleButton 			showOptionChatToggleButton;
+	ToggleButton 			streamSelectionTypeToggleButton;
+	ToggleButton 			showChatIconsToggleButton;
+	Button						optionsDoneButton;
 	
 	//Video Tab Data Members
 	TabSpec						videoTabSpec;
@@ -61,7 +74,7 @@ public class FirstResponder extends TabActivity
 	Button 						chooseStreamButton;
 	Button						fullScreenButton;
 	ToggleButton			seeChatToggleButton;
-	boolean					seeChatPopUps 					= false;
+	boolean					showChatPopUps 					= false;
 	
 	//Chat Tab Data Members
 	TabSpec						chatTabSpec;
@@ -88,14 +101,18 @@ public class FirstResponder extends TabActivity
 		//Create the tabs at the top of our "home view"
 		myTabHost = getTabHost();
 		
-		//**************************** LOGIN TAB ************************************
+//**************************** LOGIN/OPTION TAB ************************************
+		//*************************** LOGIN VIEW ***************************************
 		//Set up login tab (multiple TabSpec objects not strictly necessary, but makes code clearer...
-		loginTabSpec = myTabHost.newTabSpec(LOGIN_TAB_TAG);
-		loginTabSpec.setIndicator("Login", getResources().getDrawable(R.drawable.login));
-		loginTabSpec.setContent(R.id.login_table);
-		myTabHost.addTab(loginTabSpec);
+		loginOptionTabSpec = myTabHost.newTabSpec(LOGIN_TAB_TAG);
+		loginOptionTabSpec.setIndicator("Login", getResources().getDrawable(R.drawable.login));
+		loginOptionTabSpec.setContent(R.id.login_option_flipper);
+		myTabHost.addTab(loginOptionTabSpec);
 
-		//Create items to display in login tab
+		//Create items to display in option/login tab
+		loginOptionViewFlipper	= (ViewFlipper)findViewById(R.id.login_option_flipper);
+		loginLayout 						= (RelativeLayout)findViewById(R.id.login_table);
+		optionLayout					= (RelativeLayout)findViewById(R.id.option_table);
 		
 		//Make username and password text entry fields
 		username 	= (EditText)findViewById(R.id.username_edit_text);
@@ -108,6 +125,16 @@ public class FirstResponder extends TabActivity
 		//Create options button
 		optionsButton = (Button)findViewById(R.id.options_button);
 		optionsButton.setOnClickListener(onOptionsButtonClicked);
+		
+		//******************** OPTION LAYOUT **************************
+		showOptionChatToggleButton 			= (ToggleButton)findViewById(R.id.show_chat_option_toggle);
+		showOptionChatToggleButton.setOnClickListener(onShowOptionChatToggleButtonClicked);
+		streamSelectionTypeToggleButton 	= (ToggleButton)findViewById(R.id.show_stream_option_toggle);
+		streamSelectionTypeToggleButton.setOnClickListener(onStreamSelectionTypeToggleButtonClicked);
+		showChatIconsToggleButton				= (ToggleButton)findViewById(R.id.show_icon_option_toggle);
+		showChatIconsToggleButton.setOnClickListener(onShowChatIconsToggleButtonClicked);
+		optionsDoneButton								= (Button)findViewById(R.id.options_done_button);
+		optionsDoneButton.setOnClickListener(onOptionsDoneButtonClicked);
 		
 		//********************* VIDEO TAB *******************************
 		//Set up video viewer tab
@@ -232,7 +259,7 @@ public class FirstResponder extends TabActivity
 	public void receiveChat(String chatString)
 	{
 		//IF seeChatPopUp is selected AND we're not in the chat tab, show chat posts as Toast
-		if (seeChatPopUps && ! myTabHost.getCurrentTabTag().equalsIgnoreCase(CHAT_TAB_TAG))
+		if (showChatPopUps && ! myTabHost.getCurrentTabTag().equalsIgnoreCase(CHAT_TAB_TAG))
 		{
 			Toast.makeText(this.getBaseContext(), chatString, Toast.LENGTH_LONG);
 		}
@@ -278,11 +305,11 @@ public class FirstResponder extends TabActivity
 		{
 			if (seeChatToggleButton.isChecked())
 			{
-				seeChatPopUps = true;
+				showChatPopUps = true;
 			}
 			else
 			{
-				seeChatPopUps = false;
+				showChatPopUps = false;
 			}
 		}
     	
@@ -293,7 +320,15 @@ public class FirstResponder extends TabActivity
 
 		public void onClick(View v) 
 		{
-			sendToFullScreen();
+			if (video == null)
+			{
+				Toast toast = Toast.makeText(getApplicationContext(), "No video stream selected", Toast.LENGTH_LONG);
+				toast.show();
+			}
+			else
+			{
+				sendToFullScreen();
+			}
 		}
     	
     };
@@ -309,7 +344,9 @@ public class FirstResponder extends TabActivity
     	
     };
 	
- // *********************************** LOGIN TAB LISTENERS *******************************************
+// *********************************LOGIN/OPTION TAB LISTENERS**************************************
+    
+ // *********************************** LOGIN LAYOUT LISTENERS **************************************
     private Button.OnClickListener onLoginButtonClicked = new Button.OnClickListener()
     {
 
@@ -329,12 +366,66 @@ public class FirstResponder extends TabActivity
 
 		public void onClick(View v) 
 		{
-			//FIXME Put prpoer solution here
+			loginOptionViewFlipper.showNext();
 		}
     	
     };
     
-    // ******************* ACTIVITY MANAGEMENT METHODS ***********************
+    // ****************** OPTION LAYOUT LISTENERS ********************************
+    private Button.OnClickListener onShowOptionChatToggleButtonClicked = new Button.OnClickListener()
+    {
+
+		public void onClick(View v) 
+		{
+			if (showOptionChatToggleButton.isChecked())
+			{
+				showChatPopUps = true;
+				seeChatToggleButton.setChecked(true);
+			}
+			else
+			{
+				showChatPopUps = false;
+				seeChatToggleButton.setChecked(false);
+			}
+		}
+    	
+    };
+    
+    private Button.OnClickListener onStreamSelectionTypeToggleButtonClicked = new Button.OnClickListener()
+    {
+
+		public void onClick(View v) 
+		{
+			//Do grid vs list thing here.
+		}
+    	
+    };
+    
+    private Button.OnClickListener onShowChatIconsToggleButtonClicked = new Button.OnClickListener()
+    {
+
+		@Override
+		public void onClick(View v) {
+			// TODO Put chat icons on/off here
+			
+		}
+    	
+    };
+    
+    private Button.OnClickListener onOptionsDoneButtonClicked = new Button.OnClickListener()
+    {
+
+		@Override
+		public void onClick(View v) 
+		{
+			loginOptionViewFlipper.showPrevious();
+			
+		}
+    	
+    };
+    
+    
+ // ******************* ACTIVITY MANAGEMENT METHODS ***********************
 	private void hideKeyboard(View view)
 	{
 		

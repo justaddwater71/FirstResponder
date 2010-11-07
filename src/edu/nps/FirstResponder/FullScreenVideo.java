@@ -20,11 +20,17 @@ public class FullScreenVideo extends Activity
 
         Intent callingIntent = this.getIntent();
         
-        Bundle callingBundle = callingIntent.getExtras();
+        try
+        {
+        	Bundle callingBundle = callingIntent.getExtras();
         
-        videoURIString = callingBundle.getString(FirstResponder.INTENT_KEY_FULLSCREEN);
-
-        video = Uri.parse(videoURIString);
+        	videoURIString = callingBundle.getString(FirstResponder.INTENT_KEY_FULLSCREEN);
+        	video = Uri.parse(videoURIString);
+        }
+        catch (NullPointerException n)
+        {
+        	video = null;
+        }
         
         mainView();
     }
@@ -42,8 +48,16 @@ public class FullScreenVideo extends Activity
     	
     	fullScreenVideo.setMediaController(fullScreenMedia);
     	
-    	fullScreenVideo.setVideoURI(video);
-    	
-    	fullScreenVideo.start();
+    	if ( video == null )
+    	{
+    		Toast toast = Toast.makeText(fullScreenVideo.getContext(), "No video stream selected.", Toast.LENGTH_LONG);
+    		toast.show();
+    	}
+    	else
+    	{
+	    	fullScreenVideo.setVideoURI(video);
+	    	
+	    	fullScreenVideo.start();
+    	}
     }
 }
