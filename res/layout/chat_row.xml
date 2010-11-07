@@ -3,8 +3,8 @@
 		xmlns:android="http://schemas.android.com/apk/res/android"
 		android:layout_width="fill_parent"
 		android:layout_height="wrap_content"
+		android:id="@+id/chat_text_view"
 		android:textSize="@dimen/listview_text_size"
 		android:textColor="@color/textview_text_color"
 		android:paddingLeft="@dimen/listview_row_padding"
- >
-</TextView>
+ />
