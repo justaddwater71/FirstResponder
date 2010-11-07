@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_width="fill_parent"
+  android:layout_height="fill_parent"
+  android:orientation="vertical"
+  >
+  
+  	<ListView
+		android:id="@+id/stream_list"
+		android:layout_weight="0.17"
+		android:layout_width="fill_parent"
+		android:layout_height="fill_parent"
+		android:textColor="@color/textview_text_color"
+		android:background="@color/listview_background"
+		android:layout_margin="@dimen/listview_margin"
+	/>
+	<EditText
+		android:id = "@+id/enter_stream"
+		android:layout_weight="0.40"
+		android:layout_width="fill_parent"
+		android:layout_height="fill_parent"
+		android:layout_alignParentLeft="true"
+		android:textColor="@color/textview_text_color"
+		android:textSize="@dimen/edit_text_text_size"
+		android:background="@color/edit_text_background"
+		android:layout_margin="@dimen/edit_text_margin"
+	/>
+	<LinearLayout
+		android:orientation="horizontal"
+		android:layout_width="fill_parent"
+		android:layout_height="fill_parent"
+		android:layout_alignParentBottom="true"
+		android:layout_weight="0.43"
+	>
+		<Button
+			android:id = "@+id/set_stream"
+			android:layout_weight="0.50"
+			android:layout_width="fill_parent"
+			android:layout_height="fill_parent"
+			android:layout_gravity="left"
+			android:textSize="@dimen/vert_button_text_size"
+			android:text="OK"
+		/>
+		
+		<Button
+			android:id ="@+id/cancel_set_stream"
+			android:layout_weight="0.50"
+			android:layout_width="fill_parent"
+			android:layout_height="fill_parent"
+			android:layout_gravity="right"
+			android:textSize="@dimen/vert_button_text_size"
+			android:text="Cancel"
+		/>
+		
+	</LinearLayout>
+  		
+</LinearLayout>

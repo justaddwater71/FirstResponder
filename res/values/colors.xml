@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources>
+    <color name="textview_background">#ffffffff</color>
+    <color name="textview_text_color">#ff000000</color>
+    
+    <color name="address_background">#ffffffff</color>
+    <color name="address_text">#ff000000</color>
+    
+    <color name="listview_background">#ffffffff</color>
+    <color name="listview_text">#ff000000</color>
+    
+        <color name="edit_text_background">#ffffffff</color>
+    <color name="edit_text_text">#ff000000</color>
+</resources>

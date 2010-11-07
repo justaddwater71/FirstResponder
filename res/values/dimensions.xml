@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources>
+	<dimen name="vert_tab_text_size">10px</dimen>
+	<dimen name="textview_padding">2sp</dimen>
+    <dimen name="textview_margin">3sp</dimen>
+    <dimen name="textview_text_size">30px</dimen>
+    <dimen name="vert_button_text_size">30px</dimen>
+    <dimen name="vert_button_margin">3sp</dimen>
+    <dimen name="edit_text_padding">2sp</dimen>
+    <dimen name="edit_text_margin">3sp</dimen>
+    <dimen name="edit_text_text_size">30px</dimen>
+    <dimen name="listview_text_size">20px</dimen>
+    <dimen name="listview_margin">3sp</dimen>
+    <dimen name="listview_row_padding">7sp</dimen>
+</resources>
