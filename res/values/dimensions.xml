@@ -7,6 +7,9 @@
     <dimen name="textview_text_size">30px</dimen>
     <dimen name="vert_button_text_size">30px</dimen>
     <dimen name="vert_button_margin">3sp</dimen>
+    <dimen name="horizontal_button_text_size">25px</dimen>
+    <dimen name="horizontal_toggle_text_size">25px</dimen>
+    <dimen name="horizontal_button_margin">1sp</dimen>
     <dimen name="edit_text_padding">2sp</dimen>
     <dimen name="edit_text_margin">3sp</dimen>
     <dimen name="edit_text_text_size">20px</dimen>

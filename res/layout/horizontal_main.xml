@@ -79,26 +79,32 @@
 					    android:textColor="@color/textview_text_color"
 					    android:padding="@dimen/textview_padding"
 				    />
-
-					<Button
- 						 android:id="@+id/options_button"
- 						 android:layout_width="fill_parent" 
+					<LinearLayout
+						 android:layout_width="fill_parent" 
  						 android:layout_height="wrap_content"
  						 android:layout_alignParentBottom="true"
- 						 android:textSize="@dimen/vert_button_text_size"
- 						 android:text="Options" 
- 					/>
-					
-				 	<Button
-						android:id="@+id/login_button"
-						android:layout_width="fill_parent"
-						android:layout_height="wrap_content"
-						android:layout_above="@id/options_button"
-						android:layout_marginTop="@dimen/vert_button_margin"
-						android:textSize="@dimen/vert_button_text_size"
-						android:text="Login"
-					/>
-				
+					 >
+						<Button
+	 						 android:id="@+id/options_button"
+	 						 android:layout_width="fill_parent" 
+	 						 android:layout_height="wrap_content"
+	 						 android:layout_gravity="left"
+	 						 android:layout_weight="0.50"
+	 						 android:textSize="@dimen/horizontal_button_text_size"
+	 						 android:text="Options" 
+	 					/>
+						
+					 	<Button
+							android:id="@+id/login_button"
+							android:layout_width="fill_parent"
+							android:layout_height="wrap_content"
+							android:layout_gravity="right"
+							android:layout_weight="0.50"
+							android:layout_marginTop="@dimen/vert_button_margin"
+							android:textSize="@dimen/horizontal_button_text_size"
+							android:text="Login"
+						/>
+					</LinearLayout>
 			</RelativeLayout>>
 			
 		<RelativeLayout
@@ -197,7 +203,7 @@
 					android:layout_width="fill_parent"
 					android:layout_height="wrap_content"
 					android:layout_alignParentBottom="true"
-					android:textSize="@dimen/vert_button_text_size"
+					android:textSize="@dimen/horizontal_button_text_size"
 					android:text="Done"
 				/>
 		
@@ -225,39 +231,41 @@
 				/>
 				
 			</RelativeLayout>
-			
-				<ToggleButton
-					android:id="@+id/see_chat"
-					android:layout_width="fill_parent"
-					android:layout_height="wrap_content"
-					android:layout_alignParentBottom="true"
-					android:textSize="@dimen/vert_button_text_size"
-					android:textOn="Chat Pop Ups: On"
-					android:textOff="Chat Pop Ups: Off"
-				/>
 				
 				<LinearLayout
 					orientation="horizontal"
-					android:layout_above="@id/see_chat"
 					android:layout_width="fill_parent"
 					android:layout_height="wrap_content"
+					android:layout_alignParentBottom="true"
 				>
 				
 					<Button
 						android:id="@+id/choose_stream"
 						android:layout_width="fill_parent"
 						android:layout_height="wrap_content"
-						android:layout_weight="0.50"
-						android:textSize="@dimen/vert_button_text_size"
+						android:layout_weight="0.33"
+						android:layout_gravity="bottom"
+						android:textSize="@dimen/horizontal_button_text_size"
 						android:text="Stream"
+					/>
+				
+					<ToggleButton
+						android:id="@+id/see_chat"
+						android:layout_width="fill_parent"
+						android:layout_height="wrap_content"
+						android:layout_weight="0.33"
+						android:textSize="@dimen/listview_text_size"
+						android:textOn="Chat Pops"
+						android:textOff="Chat Pops"
 					/>
 				
 					<Button
 						android:id="@+id/full_screen"
 						android:layout_width="fill_parent"
 						android:layout_height="wrap_content"
-						android:layout_weight="0.50"
-						android:textSize="@dimen/vert_button_text_size"
+						android:layout_weight="0.33"
+						android:layout_gravity="bottom"
+						android:textSize="@dimen/horizontal_button_text_size"
 						android:text="Full"
 					/>
 					
@@ -308,7 +316,7 @@
 						android:layout_height="fill_parent"
 						android:layout_alignParentRight="true"
 						android:layout_marginTop="@dimen/edit_text_margin"
-						android:textSize="@dimen/vert_button_text_size"
+						android:textSize="@dimen/horizontal_button_text_size"
 						android:text="Send"
 					/>
 					

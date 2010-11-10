@@ -1,0 +1,46 @@
+This is the Android wireframe portion of the CS4535 class project.  This wireframe provides:
+
+3 tabs on the user interface via a TabHost.  The three tabs are:
+	Login Tab
+	Video Tab
+	Chat Tab
+	
+The TabWidgets  under TabHost are configure by TabSpec as:
+	Login Tab:
+		ViewFlipper with two views:
+			Login View
+				A shell of a view with username and password fields, but no JSON guts behind it.  A straightforward JSON implementation 
+				(straightforward on the Android side -- no help for the beleagured folks building the server side) for loggin in can be 
+				found at http://www.instropy.com/2010/06/14/reading-a-json-login-response-with-android-sdk/.
+			Options View
+				Option view is a TabeLayout built with simple rows of a label coupled with a ToggleButton.  The options found there now
+				are simply ideas for options.  Nothing is yet implemented.
+	Video Tab:
+		View with calls to two other Activities
+		FullScreenVideo Acticity
+			Provides a full screen view of the selected video. Put in a separate Activity instead of a different view to allow for separate 
+			development of embedded chat capability and to get ride of the Title Bar, System Bar, and TabWidgets.
+		StreamChooser Activity
+			Provides a place to select given streams or type in a custom stream.  Put in a separate Activity instead of another view to allow
+			for (later) development of clickable maps for stream selection without needing to deal with TabWidgets, System bar, or Title bar.
+			
+	Chat Tab
+		View with VERY basic ListView built in.  This ListView simply converts a String Array into an ArrayAdapter to display a few rows
+		of clickable text.  The actual Twitter-like implementation would need a ListView built from an Array of Adapters that show icons,
+		date-time-posted, etc.  Mark Muphy's Android Tutorial provides a straighforward, step by step implementation of a Twitter interface 
+		clone that could be put in place with a minimum of pain.
+		
+Horizontal, Vertical, and Flat Views
+	The wireframe has a very rudimentary layout adjustment for the phone in the three principal orientations, Horizontal, Vertical, and Flat.
+	The button are rearrange in Horizontal orientaion to lie in a single row and too be shorter in height.
+	
+Dimension sizing
+	Hard coding numbers into any of the layout files is avoided.  All dimensions have been coded into res/values/dimensions.xml.  This
+	lets us resize the entire app quickly.  Hard coding numbers into layouts should only be for temporary testing.  Unfortunately, the
+	text sizes are all set in pixels for now.  If this application were to mature, a getScreenSize() would need to be created and the 
+	text sizes calculated based on screen size and set programmatically instead of coded into the layouts.
+	
+Notifications
+	Once some messages can be passed to the app, a NotificationManager function will be built into the app.  NotificationManager
+	provides System Bar notification when inside the application and clickable entries in the System Notification Page.  NotificationMangaer
+	does NOT do Toasts or DialogAlerts by default, which is the behavior we need for Full Screen viewing.  That is being worked.

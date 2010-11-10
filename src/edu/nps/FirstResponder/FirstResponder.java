@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import android.app.TabActivity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
@@ -46,6 +47,7 @@ public class FirstResponder extends TabActivity
 	public static final String		INTENT_KEY_FULLSCREEN	= "fullscreen";
 	
 	TabHost						myTabHost;
+	boolean					tabIcons;
 	
 //Login/Option Tab Data Members
 	
@@ -95,7 +97,26 @@ public class FirstResponder extends TabActivity
     //Methods
     private void mainView()
     {
-		setContentView(R.layout.main);
+    	switch (this.getResources().getConfiguration().orientation)
+    	{
+    	case Configuration.ORIENTATION_PORTRAIT:
+    		setContentView(R.layout.main);
+    		tabIcons = true;
+    	  break;
+    	case Configuration.ORIENTATION_LANDSCAPE:
+    		setContentView(R.layout.horizontal_main);
+    		tabIcons = false;
+    	  break;
+    	case Configuration.ORIENTATION_SQUARE:
+    		setContentView(R.layout.main);
+    		tabIcons = true;
+    	  break;
+    	default:
+    		setContentView(R.layout.main);
+    		tabIcons = true;
+    	  break;
+    	}
+		//setContentView(R.layout.main);
 		
 		//Create the tabs at the top of our "home view"
 		myTabHost = getTabHost();
@@ -104,7 +125,14 @@ public class FirstResponder extends TabActivity
 		//*************************** LOGIN VIEW ***************************************
 		//Set up login tab (multiple TabSpec objects not strictly necessary, but makes code clearer...
 		loginOptionTabSpec = myTabHost.newTabSpec(LOGIN_TAB_TAG);
-		loginOptionTabSpec.setIndicator("Login", getResources().getDrawable(R.drawable.login));
+		if (tabIcons)
+		{
+			loginOptionTabSpec.setIndicator("Login", getResources().getDrawable(R.drawable.login));
+		}
+		else
+		{
+			loginOptionTabSpec.setIndicator("Login");
+		}
 		loginOptionTabSpec.setContent(R.id.login_option_flipper);
 		myTabHost.addTab(loginOptionTabSpec);
 
@@ -138,7 +166,14 @@ public class FirstResponder extends TabActivity
 		//********************* VIDEO TAB *******************************
 		//Set up video viewer tab
 		videoTabSpec = myTabHost.newTabSpec(VIDEO_TAB_TAG);
-		videoTabSpec.setIndicator("Video", getResources().getDrawable(R.drawable.video_camera));
+		if (tabIcons)
+		{
+			videoTabSpec.setIndicator("Video", getResources().getDrawable(R.drawable.video_camera));
+		}
+		else
+		{
+			videoTabSpec.setIndicator("Video");
+		}
 		videoTabSpec.setContent(R.id.video_viewer);
 		myTabHost.addTab(videoTabSpec);
 		
@@ -158,8 +193,6 @@ public class FirstResponder extends TabActivity
 		
 		//Create see chat pop ups toggle button with cool green light
 		seeChatToggleButton = (ToggleButton)findViewById(R.id.see_chat);
-		seeChatToggleButton.setTextOn("Chat Pop Ups: On");
-		seeChatToggleButton.setTextOff("Chat Pop Ups: Off");
 		seeChatToggleButton.setChecked(true);
 		seeChatToggleButton.setOnClickListener(onSeeChatToggleButtonClicked);
 		seeChatToggleButton.setOnClickListener(onSeeChatToggleButtonClicked);
@@ -167,7 +200,14 @@ public class FirstResponder extends TabActivity
         //******************** CHAT TAB **********************************
 		//Set up chat tab
 		chatTabSpec = myTabHost.newTabSpec(CHAT_TAB_TAG);
-		chatTabSpec.setIndicator("Chat", getResources().getDrawable(R.drawable.spechbubble));
+		if (tabIcons)
+		{
+			chatTabSpec.setIndicator("Chat", getResources().getDrawable(R.drawable.spechbubble));
+		}
+		else
+		{
+			chatTabSpec.setIndicator("Chat");
+		}
 		chatTabSpec.setContent(R.id.chat_viewer);
 		myTabHost.addTab(chatTabSpec);
 		
