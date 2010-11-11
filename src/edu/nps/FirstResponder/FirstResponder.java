@@ -202,7 +202,7 @@ public class FirstResponder extends TabActivity
 		chatTabSpec = myTabHost.newTabSpec(CHAT_TAB_TAG);
 		if (tabIcons)
 		{
-			chatTabSpec.setIndicator("Chat", getResources().getDrawable(R.drawable.spechbubble));
+			chatTabSpec.setIndicator("Chat", getResources().getDrawable(R.drawable.speechbubble));
 		}
 		else
 		{
@@ -379,6 +379,7 @@ public class FirstResponder extends TabActivity
 		public void onClick(View v) 
 		{
 			sendChat(enterChat.getText().toString());
+			hideKeyboard(v);
 		}
     	
     };

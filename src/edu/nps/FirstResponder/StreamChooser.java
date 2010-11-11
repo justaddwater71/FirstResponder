@@ -2,10 +2,12 @@ package edu.nps.FirstResponder;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -89,6 +91,17 @@ public class StreamChooser extends Activity
     	return streamLabels;
     }
     
+    private void hideKeyboard(View view)
+	{
+		
+		 //Below hide-keyboard code copied from
+		 //http://stackoverflow.com/questions/1109022/how-to-close-hide-the-android-soft-keyboard
+		 
+		InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(view.getApplicationWindowToken(), 0);
+        //End copy from stackoverflow
+	}
+    
     private Button.OnClickListener onSetStreamClick = new Button.OnClickListener()
     {
 
@@ -112,6 +125,10 @@ public class StreamChooser extends Activity
 				
 				//Use the "success" reply code in the response to FirstResponder
 				setResult(FirstResponder.REPLY_CODE_SET_STREAM, resultIntent);
+				
+				hideKeyboard(v);
+				
+				
 				
 				//Close this view
 				finish();
