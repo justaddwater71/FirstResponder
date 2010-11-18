@@ -46,6 +46,9 @@ public class FirstResponder extends TabActivity
 	//Full Screen Intent Extra Keys
 	public static final String		INTENT_KEY_FULLSCREEN	= "fullscreen";
 	
+	//Stream filename
+	public static final String		STREAM_FILE							= "stream_file.txt";
+	
 	TabHost						myTabHost;
 	boolean					tabIcons;
 	
@@ -121,8 +124,23 @@ public class FirstResponder extends TabActivity
 		//Create the tabs at the top of our "home view"
 		myTabHost = getTabHost();
 		
-//**************************** LOGIN/OPTION TAB ************************************
-		//*************************** LOGIN VIEW ***************************************
+		createLoginOptionTab();
+		
+		createVideoTab();
+		
+		createChatTab();
+		
+		//Set Initial Active Tab
+		myTabHost.setCurrentTabByTag(LOGIN_TAB_TAG);
+    }
+  
+    //******************** Tab View Setup Methods **************************************
+    
+	//**************************** LOGIN/OPTION TAB ************************************
+    public void createLoginOptionTab()
+    {
+
+		
 		//Set up login tab (multiple TabSpec objects not strictly necessary, but makes code clearer...
 		loginOptionTabSpec = myTabHost.newTabSpec(LOGIN_TAB_TAG);
 		if (tabIcons)
@@ -136,10 +154,11 @@ public class FirstResponder extends TabActivity
 		loginOptionTabSpec.setContent(R.id.login_option_flipper);
 		myTabHost.addTab(loginOptionTabSpec);
 
-		//Create items to display in option/login tab
 		loginOptionViewFlipper	= (ViewFlipper)findViewById(R.id.login_option_flipper);
+		
+		//*************************** LOGIN VIEW ***************************************
+		//Create items to display in option/login tab
 		loginLayout 						= (RelativeLayout)findViewById(R.id.login_table);
-		optionLayout					= (RelativeLayout)findViewById(R.id.option_table);
 		
 		//Make username and password text entry fields
 		username 	= (EditText)findViewById(R.id.username_edit_text);
@@ -154,6 +173,7 @@ public class FirstResponder extends TabActivity
 		optionsButton.setOnClickListener(onOptionsButtonClicked);
 		
 		//******************** OPTION LAYOUT **************************
+		optionLayout					= (RelativeLayout)findViewById(R.id.option_table);
 		showOptionChatToggleButton 			= (ToggleButton)findViewById(R.id.show_chat_option_toggle);
 		showOptionChatToggleButton.setOnClickListener(onShowOptionChatToggleButtonClicked);
 		streamSelectionTypeToggleButton 	= (ToggleButton)findViewById(R.id.show_stream_option_toggle);
@@ -162,8 +182,11 @@ public class FirstResponder extends TabActivity
 		showChatIconsToggleButton.setOnClickListener(onShowChatIconsToggleButtonClicked);
 		optionsDoneButton								= (Button)findViewById(R.id.options_done_button);
 		optionsDoneButton.setOnClickListener(onOptionsDoneButtonClicked);
-		
-		//********************* VIDEO TAB *******************************
+    }
+    
+    private void createVideoTab()
+    {
+    	//********************* VIDEO TAB *******************************
 		//Set up video viewer tab
 		videoTabSpec = myTabHost.newTabSpec(VIDEO_TAB_TAG);
 		if (tabIcons)
@@ -196,8 +219,11 @@ public class FirstResponder extends TabActivity
 		seeChatToggleButton.setChecked(true);
 		seeChatToggleButton.setOnClickListener(onSeeChatToggleButtonClicked);
 		seeChatToggleButton.setOnClickListener(onSeeChatToggleButtonClicked);
-		
-        //******************** CHAT TAB **********************************
+    }
+    
+    private void createChatTab()
+    {
+    	 //******************** CHAT TAB **********************************
 		//Set up chat tab
 		chatTabSpec = myTabHost.newTabSpec(CHAT_TAB_TAG);
 		if (tabIcons)
@@ -227,31 +253,26 @@ public class FirstResponder extends TabActivity
 		//Create send caht button
 		sendChatButton = (Button)findViewById(R.id.send_chat);
 		sendChatButton.setOnClickListener(onSendChatButtonClicked);
-		
-		//****************** Set Initial Active Tab ***********************
-		myTabHost.setCurrentTabByTag(LOGIN_TAB_TAG);
-		
     }
-  
+    
     //******************** FUNCTIONAL METHODS *****************************************  
     //Hook for actual JSON getStreams() method.  Currently hard coded for testing purposes
-	public static String[] getStreams()
+/*	public static ArrayList<String> getStreams()
 	{
-		String [] streams = null;
+		ArrayList<String> streams = null;
 		
 		//For testing purposes only.......................................
 		//Set up a few dummy strings....
-		streams = new String[5];
+		streams = new ArrayList<String>();
 		
-    	streams[0] = "/sdcard/test2.3gp";
-    	streams[1] = "rtsp://v3.cache6.c.youtube.com/CjgLENy73wIaLwkc2NKc3hvZQBMYESARFEIJbXYtZ29vZ2xlSARSB3JlbGF0ZWRgrOuMlcOelOVMDA==/0/0/0/video.3gp";
-    	streams[2] = "rtsp://v3.cache4.c.youtube.com/CjYLENy73wIaLQn-5SAo5qVUFhMYESARFEIJbXYtZ29vZ2xlSARSBXdhdGNoYKzrjJXDnpTlTAw=/0/0/0/video.3gp";
-    	streams[3] = "/sdcard/CDR-Dinner_LAN_800k.mp4";
-    	streams[4] = "rtsp://192.168.13.133:8000/stream.sdp";
-    	
+    	streams.add( "/sdcard/test2.3gp");
+    	streams.add("rtsp://v3.cache6.c.youtube.com/CjgLENy73wIaLwkc2NKc3hvZQBMYESARFEIJbXYtZ29vZ2xlSARSB3JlbGF0ZWRgrOuMlcOelOVMDA==/0/0/0/video.3gp");
+    	streams.add( "rtsp://v3.cache4.c.youtube.com/CjYLENy73wIaLQn-5SAo5qVUFhMYESARFEIJbXYtZ29vZ2xlSARSBXdhdGNoYKzrjJXDnpTlTAw=/0/0/0/video.3gp");
+    	streams.add("/sdcard/CDR-Dinner_LAN_800k.mp4");
+    	streams.add("rtsp://192.168.13.133:8000/stream.sdp");
 		//End for testing purposes only......................................
 		return streams;
-	}
+	}*/
 	
 	/* 
 	 * Method to launch Stream Chooser view that allows stream to be chosen and stream
@@ -345,10 +366,12 @@ public class FirstResponder extends TabActivity
 			if (seeChatToggleButton.isChecked())
 			{
 				showChatPopUps = true;
+				showOptionChatToggleButton.setChecked(true);
 			}
 			else
 			{
 				showChatPopUps = false;
+				showOptionChatToggleButton.setChecked(false);
 			}
 		}
     	
@@ -397,6 +420,9 @@ public class FirstResponder extends TabActivity
 			hideKeyboard(view);
 			
 			login(usernameString, passwordString);
+			
+			username.setText("");
+			password.setText("");
 		}
     	
     };
@@ -502,6 +528,7 @@ public class FirstResponder extends TabActivity
 			case REQ_CODE_STREAM:
 						
 					setStream(result.getString(INTENT_KEY_STREAM));
+					
 					break;
 			
 			//Options is the View returning a value

@@ -294,6 +294,8 @@
 						android:layout_weight="0.30"
 						android:layout_width="fill_parent"
 						android:layout_height="fill_parent"
+						android:inputType="text"
+						android:hint="Type your chat here..."
 						android:layout_alignParentLeft="true"
 						android:textColor="@color/textview_text_color"
 						android:textSize="@dimen/edit_text_text_size"

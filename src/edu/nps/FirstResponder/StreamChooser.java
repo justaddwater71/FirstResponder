@@ -1,10 +1,20 @@
 package edu.nps.FirstResponder;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.util.ArrayList;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -13,6 +23,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 
 public class StreamChooser extends Activity 
@@ -26,10 +37,11 @@ public class StreamChooser extends Activity
 			//Do nothing
 		}
 	};
-	Button 	setStream;
-	Button 	cancelSetStream;
-	String[] 	streamLabels;
-	String[] 	streamFQDN;
+	Button 								setStream;
+	Button 								cancelSetStream;
+	ArrayList<String> 			streamLabels = new ArrayList<String>();
+	ArrayList<String> 			streamFQDN = new ArrayList<String>();
+	ArrayAdapter	<String>	streamListAdapter;
 	
 	 /** Called when the activity is first created. */
     @Override
@@ -38,7 +50,7 @@ public class StreamChooser extends Activity
         
         mainView();
     }
-	
+    
     private void mainView()
     {
     	setContentView(R.layout.stream_chooser);
@@ -46,11 +58,15 @@ public class StreamChooser extends Activity
     	//Set up a ListView with clickable rows.  Each row shows a label for a data stream
     	streamListView 	= (ListView)findViewById(R.id.stream_list);
     	
-        streamFQDN			= FirstResponder.getStreams();
+       /* streamFQDN			= FirstResponder.getStreams();*/
         
-        streamLabels 		= getStreamLabels(streamFQDN);
+        /*streamLabels 		= getStreamLabels(streamFQDN)*/;
+        
+        getStreams();
       
-        streamListView.setAdapter(new ArrayAdapter<String>(this, R.layout.stream_row, streamLabels));
+        streamListAdapter	= new ArrayAdapter<String>(this, R.layout.stream_row, streamLabels);
+        
+        streamListView.setAdapter(streamListAdapter);
         streamListView.setOnItemClickListener(streamListViewRowListener);
         
         enterStream 			= (EditText)findViewById(R.id.enter_stream);
@@ -69,26 +85,48 @@ public class StreamChooser extends Activity
 		@Override
 		public void onItemClick(AdapterView<?> arg0, View view, int position, long id) 
 		{
-			enterStream.setText(streamFQDN[position]);
+			enterStream.setText(streamFQDN.get(position));
 		}
     	
     };
     
-    public String[] getStreamLabels(String[] streamFQDN)
+    public void getStreams()
     {
-    	String[] streamLabels = null;
+    	try 
+    	{
+    		InputStream				inputStream		= openFileInput(FirstResponder.STREAM_FILE);
+			InputStreamReader streamReader = new InputStreamReader (inputStream);
+			BufferedReader		bufferedReader = new BufferedReader(streamReader);
+			String line;
+			String[] splitTemp = new String[2];
+			
+			while ((line = bufferedReader.readLine()) != null)
+			{
+				try
+				{
+					splitTemp = line.split("\t");
+					streamLabels.add(splitTemp[0]);
+					streamFQDN.add(splitTemp[1]);
+				}
+				catch (IndexOutOfBoundsException i)
+				{
+					//Do nothing, bad file
+				}
+			}
+			
+			inputStream.close();
+			
+		}
+    	//IF no file is found, then make one
+    	catch (FileNotFoundException e) 
+		{
+    		//Do nothing, bad file
+		}
+    	catch (IOException e) 
+		{
+    		//Do nothing, bad file
+		}
     	
-    	//Parse an array of Strings (FQDN of each stream) into just the label/filename
-    	//For testing purposes only
-    	streamLabels = new String[5];
-    	
-    	streamLabels[0] = "Shuttle Test";
-    	streamLabels[1] = "YouTube 3GP Sample 1";
-    	streamLabels[2] = "YouTube 3GP Sample 2";
-    	streamLabels[3] = "Philips Commericial";
-    	streamLabels[4] = "My Laptop Streaming";
-    	
-    	return streamLabels;
     }
     
     private void hideKeyboard(View view)
@@ -108,11 +146,64 @@ public class StreamChooser extends Activity
 		public void onClick(View v) 
 		{
 			//Get the text from the edit text box
-			String enterStreamText = enterStream.getText().toString();
+			final String enterStreamText = enterStream.getText().toString();
 			
 			//If the enter text is left blank, don't update the stream
 			if (enterStreamText != null && ! enterStreamText.equalsIgnoreCase(""))
 			{
+				if (! streamFQDN.contains(enterStreamText))
+				{
+					streamListAdapter.add(enterStreamText);
+					
+					//This file is for testing purposes only, we won't be writing streams out in operation
+					try 
+					{
+						OutputStream outputStream 	=	openFileOutput(FirstResponder.STREAM_FILE, Context.MODE_APPEND);
+						final OutputStreamWriter outWriter	=	new OutputStreamWriter(outputStream);
+						
+						AlertDialog.Builder alert = new AlertDialog.Builder(v.getContext());
+						
+						final Context alertContext = v.getContext();
+						
+						alert.setTitle("Stream Label");
+						alert.setMessage("Enter label to use for stream.");
+						
+						final EditText newStringLabel = new EditText(v.getContext());
+						alert.setView(newStringLabel);
+						
+						alert.setPositiveButton("OK", new OnClickListener()
+						{
+
+							@Override
+							public void onClick(DialogInterface dialog, int which) 
+							{
+								try 
+								{
+									outWriter.write(newStringLabel.getText().toString() + "\t" + enterStreamText);
+								} 
+								catch (IOException e) 
+								{
+									Toast toast = Toast.makeText(alertContext, "Your video stream is set for viewing, but has not been saved to history due to IO error --DARN!!", Toast.LENGTH_LONG);
+									toast.show();
+								}
+							}
+						});
+
+						alert.setCancelable(true);						
+						
+						alert.show();
+					} 
+					catch (FileNotFoundException e)
+					{
+						//What?  openFileOutput is both a writer and a file creator.  I've missed something here.
+					}
+/*					catch (IOException i)
+					{
+						Toast toast = Toast.makeText(v.getContext(), "Your video stream is set for viewing, but has not been saved to history due to IO error --DARN!!", Toast.LENGTH_LONG);
+						toast.show();
+					}*/
+				}
+				
 				//Build an intent, bundle it, add the stream as an extra, pass it back to the caller
 				Intent resultIntent = new Intent();
 				
@@ -127,8 +218,6 @@ public class StreamChooser extends Activity
 				setResult(FirstResponder.REPLY_CODE_SET_STREAM, resultIntent);
 				
 				hideKeyboard(v);
-				
-				
 				
 				//Close this view
 				finish();
