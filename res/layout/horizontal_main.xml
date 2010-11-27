@@ -1,332 +1,341 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TabHost 
-	 xmlns:android="http://schemas.android.com/apk/res/android"
-	 android:id="@android:id/tabhost"
-	 android:layout_width="fill_parent"
-	 android:layout_height="fill_parent"
- >
-	 <LinearLayout
-		 xmlns:android="http://schemas.android.com/apk/res/android"
-		 android:orientation="vertical"
-		 android:layout_width="fill_parent"
-		 android:layout_height="fill_parent"		 
+<TabHost
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@android:id/tabhost"
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent"
+>
+	<LinearLayout
+		xmlns:android="http://schemas.android.com/apk/res/android"
+		android:orientation="vertical"
+		android:layout_width="fill_parent"
+		android:layout_height="fill_parent"
 	>
-	 	<TabWidget
-	 	 android:id="@android:id/tabs"
-		 android:layout_width="fill_parent"
-		 android:layout_height="wrap_content"	
-	 	/>
-	 	<FrameLayout
-	 		android:id="@android:id/tabcontent"
-	 		android:layout_width="fill_parent"
-	 		android:layout_height="fill_parent"
-	 	>
-	 		<ViewFlipper
-	 			android:id="@+id/login_option_flipper"
-	 			android:layout_width="fill_parent"
-	 			android:layout_height="fill_parent"
-	 		>
-	 		<RelativeLayout
-	 			android:id="@+id/login_table"
-	 			android:layout_width="fill_parent"
-	 			android:layout_height="fill_parent"
-	 			>
-	 			
- 					<TextView
- 						android:id="@+id/username_text_label"
- 						android:layout_alignParentTop="true"
- 						android:gravity="center_horizontal"
- 						android:layout_width="fill_parent"
- 						android:layout_height="wrap_content"
- 						android:textSize="@dimen/textview_text_size"
- 						android:text="Username"
- 					/>
-	 			
- 					<EditText  
-						android:id="@+id/username_edit_text"
-					   	android:layout_width="fill_parent" 
-					    android:layout_height="wrap_content"
-					    android:background="@color/textview_background" 
-					    android:layout_below="@id/username_text_label"
-					    android:layout_margin="@dimen/textview_margin"
-					    android:editable="true"
-					    android:inputType="text"
-					    android:textSize="@dimen/login_box_text_size"
-					    android:textColor="@color/textview_text_color"
-					    android:padding="@dimen/textview_padding"
-					    />
-
-		    	 	<TextView
- 						android:id="@+id/password_text_label"
- 						android:layout_width="fill_parent"
- 						android:layout_height="wrap_content"
- 						android:gravity="center_horizontal"
- 						android:layout_below="@id/username_edit_text"
- 						android:textSize="@dimen/textview_text_size"
- 						android:text="Password"
- 					/>
-			    
-					<EditText  
-						android:id="@+id/password_edit_text"
-					    android:layout_width="fill_parent" 
-					    android:layout_height="wrap_content"
-					    android:background="@color/textview_background" 
-					    android:layout_below="@id/password_text_label"
-					    android:layout_margin="@dimen/textview_margin"
-					    android:editable="true"
-					    android:inputType="textPassword"
-					    android:textSize="@dimen/login_box_text_size"
-					    android:textColor="@color/textview_text_color"
-					    android:padding="@dimen/textview_padding"
-				    />
-					<LinearLayout
-						 android:layout_width="fill_parent" 
- 						 android:layout_height="wrap_content"
- 						 android:layout_alignParentBottom="true"
-					 >
-						<Button
-	 						 android:id="@+id/options_button"
-	 						 android:layout_width="fill_parent" 
-	 						 android:layout_height="wrap_content"
-	 						 android:layout_gravity="left"
-	 						 android:layout_weight="0.50"
-	 						 android:textSize="@dimen/horizontal_button_text_size"
-	 						 android:text="Options" 
-	 					/>
-						
-					 	<Button
-							android:id="@+id/login_button"
-							android:layout_width="fill_parent"
-							android:layout_height="wrap_content"
-							android:layout_gravity="right"
-							android:layout_weight="0.50"
-							android:layout_marginTop="@dimen/vert_button_margin"
-							android:textSize="@dimen/horizontal_button_text_size"
-							android:text="Login"
-						/>
-					</LinearLayout>
-			</RelativeLayout>>
-			
-		<RelativeLayout
-			android:id="@+id/option_table"
-	  		android:layout_width="fill_parent"
-	  		android:layout_height="fill_parent"
-		>
-		
-		<TableLayout		
-			android:orientation="vertical"
-	  		android:layout_width="fill_parent"
-	  		android:layout_height="wrap_content"
-  		>
-  
-		  	<TableRow
-		  		android:layout_width="fill_parent"
-		  	>
-		  	
-			  	<TextView 
-			  		android:id="@+id/show_chat_option_label"
-			  		android:layout_below="@id/username_edit_text"
- 					android:textSize="@dimen/option_table_text_size"
- 					android:layout_weight="0.50"
- 					android:layout_gravity="center_vertical"
-			  		android:text="Show Chat Pop-Ups"
-				/>
-				
-				<ToggleButton
-					android:id="@+id/show_chat_option_toggle"
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					android:layout_weight="0.50"
-					android:layout_gravity="center_vertical"
-					android:textSize="@dimen/listview_text_size"
-			  		android:textOn="On"
-			  		android:textOff="Off"
-			  	/>
-			  	
-			  	</TableRow>
-			  	
-			  	<TableRow
-		  			android:layout_width="fill_parent"
-		  		>
-			  	
-			  	<TextView 
-			  		android:id="@+id/show_stream_option_label"
-			  		android:layout_below="@id/username_edit_text"
- 					android:textSize="@dimen/option_table_text_size"
- 					android:layout_weight="0.50"
- 					android:layout_gravity="center_vertical"
-			  		android:text="Stream Selection"
-				/>
-				
-				<ToggleButton
-					android:id="@+id/show_stream_option_toggle"
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					android:layout_weight="0.50"
-					android:layout_gravity="center_vertical"
-					android:textSize="@dimen/listview_text_size"
-			  		android:textOn="Grid"
-			  		android:textOff="List"
-			  	/>
-				
-			</TableRow>
-		
-			<TableRow
-		  			android:layout_width="fill_parent"
-		  		>
-			  	
-			  	<TextView 
-			  		android:id="@+id/show_icon_option_label"
-			  		android:layout_below="@id/username_edit_text"
- 					android:textSize="@dimen/option_table_text_size"
- 					android:layout_weight="0.50"
- 					android:layout_gravity="center_vertical"
-			  		android:text="Chat Icons"
-				/>
-				
-				<ToggleButton
-					android:id="@+id/show_icon_option_toggle"
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					android:layout_weight="0.50"
-					android:layout_gravity="center_vertical"
-					android:textSize="@dimen/listview_text_size"
-			  		android:textOn="On"
-			  		android:textOff="Off"
-			  	/>
-				
-			</TableRow>
-		</TableLayout>
-		
-				<Button
-					android:id="@+id/options_done_button"
-					android:layout_width="fill_parent"
-					android:layout_height="wrap_content"
-					android:layout_alignParentBottom="true"
-					android:textSize="@dimen/horizontal_button_text_size"
-					android:text="Done"
-				/>
-		
-		</RelativeLayout>
-		
-</ViewFlipper>
-
- 		<RelativeLayout
- 			android:id="@+id/video_viewer"
- 			android:layout_width="fill_parent"
+		<TabWidget
+			android:id="@android:id/tabs"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:layout_marginRight="3sp" />
+		<FrameLayout
+			android:id="@android:id/tabcontent"
+			android:layout_width="fill_parent"
 			android:layout_height="fill_parent"
 		>
-			
-			<RelativeLayout
-				android:orientation="horizontal"
+			<ViewFlipper
+				android:id="@+id/login_option_flipper"
 				android:layout_width="fill_parent"
-				android:layout_height="wrap_content"
+				android:layout_height="fill_parent"
 			>
-			
-				<VideoView 
-					android:id="@+id/video_app"
-					android:layout_centerInParent="true"
-					android:layout_width="wrap_content" 
-					android:layout_height="wrap_content"
-				/>
-				
-			</RelativeLayout>
-				
-				<LinearLayout
-					orientation="horizontal"
+				<RelativeLayout
+					android:id="@+id/login_table"
 					android:layout_width="fill_parent"
-					android:layout_height="wrap_content"
-					android:layout_alignParentBottom="true"
+					android:layout_height="fill_parent"
 				>
-				
-					<Button
-						android:id="@+id/choose_stream"
-						android:layout_width="fill_parent"
-						android:layout_height="wrap_content"
-						android:layout_weight="0.33"
-						android:layout_gravity="bottom"
-						android:textSize="@dimen/horizontal_button_text_size"
-						android:text="Stream"
-					/>
-				
-					<ToggleButton
-						android:id="@+id/see_chat"
-						android:layout_width="fill_parent"
-						android:layout_height="wrap_content"
-						android:layout_weight="0.33"
-						android:textSize="@dimen/listview_text_size"
-						android:textOn="Chat Pops"
-						android:textOff="Chat Pops"
-					/>
-				
-					<Button
-						android:id="@+id/full_screen"
-						android:layout_width="fill_parent"
-						android:layout_height="wrap_content"
-						android:layout_weight="0.33"
-						android:layout_gravity="bottom"
-						android:textSize="@dimen/horizontal_button_text_size"
-						android:text="Full"
-					/>
-					
-				</LinearLayout>
-				
-		</RelativeLayout>
 
-			<LinearLayout
-				android:id="@+id/chat_viewer"
-				android:orientation="vertical"
+					<TextView
+						android:id="@+id/username_text_label"
+						android:layout_alignParentTop="true"
+						android:gravity="center_horizontal"
+						android:layout_width="fill_parent"
+						android:layout_height="wrap_content"
+						android:textSize="@dimen/textview_text_size"
+						android:text="Username" />
+
+					<EditText
+						android:id="@+id/username_edit_text"
+						android:layout_width="fill_parent"
+						android:layout_height="wrap_content"
+						android:background="@color/textview_background"
+						android:layout_below="@id/username_text_label"
+						android:layout_margin="@dimen/textview_margin"
+						android:editable="true"
+						android:inputType="text"
+						android:textSize="@dimen/login_box_text_size"
+						android:textColor="@color/textview_text_color"
+						android:padding="@dimen/textview_padding" />
+
+					<TextView
+						android:id="@+id/password_text_label"
+						android:layout_width="fill_parent"
+						android:layout_height="wrap_content"
+						android:gravity="center_horizontal"
+						android:layout_below="@id/username_edit_text"
+						android:textSize="@dimen/textview_text_size"
+						android:text="Password" />
+
+					<EditText
+						android:id="@+id/password_edit_text"
+						android:layout_width="fill_parent"
+						android:layout_height="wrap_content"
+						android:background="@color/textview_background"
+						android:layout_below="@id/password_text_label"
+						android:layout_margin="@dimen/textview_margin"
+						android:editable="true"
+						android:inputType="textPassword"
+						android:textSize="@dimen/login_box_text_size"
+						android:textColor="@color/textview_text_color"
+						android:padding="@dimen/textview_padding" />
+
+					<Button
+						android:id="@+id/options_button"
+						android:layout_width="fill_parent"
+						android:layout_height="wrap_content"
+						android:layout_alignParentBottom="true"
+						android:textSize="@dimen/vert_button_text_size"
+						android:text="Options" />
+
+					<Button
+						android:id="@+id/login_button"
+						android:layout_width="fill_parent"
+						android:layout_height="wrap_content"
+						android:layout_above="@id/options_button"
+						android:layout_marginTop="@dimen/vert_button_margin"
+						android:textSize="@dimen/vert_button_text_size"
+						android:text="Login" />
+
+				</RelativeLayout>
+				>
+
+				<RelativeLayout
+					android:id="@+id/option_table"
+					android:layout_width="fill_parent"
+					android:layout_height="fill_parent"
+				>
+
+					<TableLayout
+						android:orientation="vertical"
+						android:layout_width="fill_parent"
+						android:layout_height="wrap_content"
+					>
+
+						<TableRow
+							android:layout_width="fill_parent"
+						>
+
+							<TextView
+								android:id="@+id/show_chat_option_label"
+								android:layout_below="@id/username_edit_text"
+								android:textSize="@dimen/option_table_text_size"
+								android:layout_weight="0.50"
+								android:layout_gravity="center_vertical"
+								android:text="Show Chat Pop-Ups" />
+
+							<ToggleButton
+								android:id="@+id/show_chat_option_toggle"
+								android:layout_width="wrap_content"
+								android:layout_height="wrap_content"
+								android:layout_weight="0.50"
+								android:layout_gravity="center_vertical"
+								android:textSize="@dimen/listview_text_size"
+								android:textOn="On"
+								android:textOff="Off" />
+
+						</TableRow>
+
+						<TableRow
+							android:layout_width="fill_parent"
+						>
+
+							<TextView
+								android:id="@+id/show_stream_option_label"
+								android:layout_below="@id/username_edit_text"
+								android:textSize="@dimen/option_table_text_size"
+								android:layout_weight="0.50"
+								android:layout_gravity="center_vertical"
+								android:text="Stream Selection" />
+
+							<ToggleButton
+								android:id="@+id/show_stream_option_toggle"
+								android:layout_width="wrap_content"
+								android:layout_height="wrap_content"
+								android:layout_weight="0.50"
+								android:layout_gravity="center_vertical"
+								android:textSize="@dimen/listview_text_size"
+								android:textOn="Grid"
+								android:textOff="List" />
+
+						</TableRow>
+
+						<TableRow
+							android:layout_width="fill_parent"
+						>
+
+							<TextView
+								android:id="@+id/show_icon_option_label"
+								android:layout_below="@id/username_edit_text"
+								android:textSize="@dimen/option_table_text_size"
+								android:layout_weight="0.50"
+								android:layout_gravity="center_vertical"
+								android:text="Chat Icons" />
+
+							<ToggleButton
+								android:id="@+id/show_icon_option_toggle"
+								android:layout_width="wrap_content"
+								android:layout_height="wrap_content"
+								android:layout_weight="0.50"
+								android:layout_gravity="center_vertical"
+								android:textSize="@dimen/listview_text_size"
+								android:textOn="On"
+								android:textOff="Off" />
+
+						</TableRow>
+					</TableLayout>
+
+					<Button
+						android:id="@+id/options_done_button"
+						android:layout_width="fill_parent"
+						android:layout_height="wrap_content"
+						android:layout_alignParentBottom="true"
+						android:textSize="@dimen/vert_button_text_size"
+						android:text="Done" />
+
+				</RelativeLayout>
+
+			</ViewFlipper>
+
+			<RelativeLayout
+				android:id="@+id/video_viewer"
 				android:layout_width="fill_parent"
 				android:layout_height="fill_parent"
 			>
 
+				<RelativeLayout
+					android:orientation="horizontal"
+					android:layout_width="fill_parent"
+					android:layout_height="wrap_content"
+				>
+
+					<VideoView
+						android:id="@+id/video_app"
+						android:layout_centerInParent="true"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content" />
+
+				</RelativeLayout>
+
+				<ToggleButton
+					android:id="@+id/see_chat"
+					android:layout_width="fill_parent"
+					android:layout_height="wrap_content"
+					android:layout_alignParentBottom="true"
+					android:textSize="@dimen/vert_button_text_size"
+					android:textOn="Chat Pop Ups: On"
+					android:textOff="Chat Pop Ups: Off" />
+
+				<LinearLayout
+					orientation="horizontal"
+					android:layout_above="@id/see_chat"
+					android:layout_width="fill_parent"
+					android:layout_height="wrap_content"
+				>
+
+					<Button
+						android:id="@+id/choose_stream"
+						android:layout_width="fill_parent"
+						android:layout_height="wrap_content"
+						android:layout_weight="0.50"
+						android:textSize="@dimen/vert_button_text_size"
+						android:text="Stream" />
+
+					<Button
+						android:id="@+id/full_screen"
+						android:layout_width="fill_parent"
+						android:layout_height="wrap_content"
+						android:layout_weight="0.50"
+						android:textSize="@dimen/vert_button_text_size"
+						android:text="Full" />
+
+				</LinearLayout>
+
+			</RelativeLayout>
+
+			<LinearLayout
+				android:id="@+id/chat_viewer"
+				android:orientation="vertical"
+				android:background="#000000"
+				android:layout_width="fill_parent"
+				android:layout_height="fill_parent"
+			>
+
+				<LinearLayout
+					android:orientation="horizontal"
+					android:background="#000000"
+					android:layout_width="fill_parent"
+					android:layout_height="fill_parent"
+					android:layout_weight="9.4"
+					android:padding="0sp"
+					android:layout_marginBottom="0sp"
+				>
+
+					<LinearLayout
+						android:id="@+id/tab_row"
+						android:orientation="horizontal"
+						android:background="#000000"
+						android:layout_width="fill_parent"
+						android:layout_height="fill_parent"
+						android:layout_weight="1"
+						android:padding="0sp"
+						android:layout_marginBottom="0sp" />
+
+					<Button
+						android:id="@+id/add_chat_group"
+						android:layout_width="fill_parent"
+						android:layout_height="fill_parent"
+						android:layout_weight="3"
+						android:layout_marginLeft="0sp"
+						android:layout_marginTop="1sp"
+						android:layout_marginRight="3sp"
+						android:layout_marginBottom="0sp"
+						android:layout_gravity="right" />
+
+				</LinearLayout>
+
 				<ListView
 					android:id="@+id/show_chat"
-					android:layout_weight="0.25"
+					android:orientation="vertical"
 					android:layout_width="fill_parent"
 					android:layout_height="fill_parent"
 					android:textColor="@color/textview_text_color"
 					android:background="@color/listview_background"
-					android:layout_margin="@dimen/listview_margin"
-				/>
-			
+					android:cacheColorHint="#ffffff"
+					android:layout_marginTop="0sp"
+					android:layout_marginBottom="3sp"
+					android:layout_marginRight="3sp"
+					android:padding="0sp"
+					android:layout_weight="2"
+					android:stackFromBottom="true" />
+
+
 				<LinearLayout
+					android:id="@+id/chat_tools"
 					android:orientation="horizontal"
 					android:layout_width="fill_parent"
 					android:layout_height="fill_parent"
-					android:layout_alignParentBottom="true"
-					android:layout_weight="0.75"
+					android:layout_weight="9"
+					android:background="#000000"
 				>
+
 					<EditText
-						android:id = "@+id/enter_chat"
-						android:layout_weight="0.30"
+						android:id="@+id/enter_chat"
+						android:layout_weight="1"
 						android:layout_width="fill_parent"
-						android:layout_height="fill_parent"
+						android:layout_height="wrap_content"
+						android:editable="true"
 						android:inputType="text"
-						android:layout_alignParentLeft="true"
-						android:textColor="@color/textview_text_color"
-						android:textSize="@dimen/edit_text_text_size"
-						android:background="@color/edit_text_background"
-						android:layout_margin="@dimen/edit_text_margin"
-					/>
-					
+						android:hint="Type chat text here" />
+
 					<Button
-						android:id = "@+id/send_chat"
-						android:layout_weight="0.70"
+						android:id="@+id/send_chat"
+						android:layout_weight="3"
 						android:layout_width="fill_parent"
-						android:layout_height="fill_parent"
-						android:layout_alignParentRight="true"
-						android:layout_marginTop="@dimen/edit_text_margin"
-						android:textSize="@dimen/horizontal_button_text_size"
-						android:text="Send"
-					/>
-					
+						android:layout_height="wrap_content"
+						android:text="Send" />
+
 				</LinearLayout>
-				
-				
-			</LinearLayout>>
-			
-	 	</FrameLayout>
-	 	
- 	</LinearLayout>	
- </TabHost>
+
+			</LinearLayout>
+
+		</FrameLayout>
+
+	</LinearLayout>
+</TabHost>

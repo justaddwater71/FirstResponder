@@ -1,18 +1,25 @@
 package edu.nps.FirstResponder;
 
 import java.util.ArrayList;
+import java.util.Iterator;
+
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.TabActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Adapter;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.MediaController;
@@ -22,6 +29,7 @@ import android.widget.Toast;
 import android.widget.ToggleButton;
 import android.widget.VideoView;
 import android.widget.ViewFlipper;
+import android.widget.LinearLayout.LayoutParams;
 import android.widget.TabHost.TabSpec;
 
 public class FirstResponder extends TabActivity 
@@ -46,8 +54,14 @@ public class FirstResponder extends TabActivity
 	//Full Screen Intent Extra Keys
 	public static final String		INTENT_KEY_FULLSCREEN	= "fullscreen";
 	
+	//Notification Intent keys
+	public static final int			INTENT_KEY_ENTERING_NOTIFICATION 	= 2;
+	public static final int			INTENT_KEY_LEAVING_NOTIFICATION 		= 3;
+	
 	//Stream filename
 	public static final String		STREAM_FILE							= "stream_file.txt";
+	
+	private NotificationManager notifier;
 	
 	TabHost						myTabHost;
 	boolean					tabIcons;
@@ -81,17 +95,22 @@ public class FirstResponder extends TabActivity
 	boolean					showChatPopUps 					= false;
 	
 	//Chat Tab Data Members
-	TabSpec						chatTabSpec;
-	ListView 					showChatListView;
-	ArrayList	<String>	chatArrayList							= new ArrayList<String>();
-	ListAdapter				chatListAdapter;
-	EditText 						enterChat;
-	Button 						sendChatButton;
+	TabSpec									chatTabSpec;
+	ListAdapter							chatListAdapter;
+	EditText 									enterChat;
+	Button 									sendChatButton;
+	LinearLayout 						tabRow;
+	ArrayList<Button> 				buttonArrayList 	= new ArrayList<Button>();
+	ListView 								chatPostsView;
+	ArrayList<ArrayAdapter<String>> chatPostsAdapterList = new ArrayList<ArrayAdapter<String>>();
+	ArrayAdapter<String>		chatPostsAdapter;
+	ArrayList<String>				chatGroupIDList			= new ArrayList<String>();
 	
 	//Constructors
     /** Called when the activity is first created. */
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) 
+    {
         super.onCreate(savedInstanceState);
         
         mainView();
@@ -122,6 +141,11 @@ public class FirstResponder extends TabActivity
 		//setContentView(R.layout.main);
 		
 		//Create the tabs at the top of our "home view"
+    	
+    	notifier = (NotificationManager) getSystemService ( Context.NOTIFICATION_SERVICE );
+    	
+    	
+    	
 		myTabHost = getTabHost();
 		
 		createLoginOptionTab();
@@ -237,15 +261,38 @@ public class FirstResponder extends TabActivity
 		chatTabSpec.setContent(R.id.chat_viewer);
 		myTabHost.addTab(chatTabSpec);
 		
-		//Once the JSON stream stuff is setup, can grab the stream info here (uncomment below)
-        //setStream(streamName);
-        		
-		//Create items to display in chat tab
-		//Create ListView of all items chatted
-		showChatListView 	= (ListView)findViewById(R.id.show_chat);
-		testLoadChatListView();
-		chatListAdapter		= makeListAdapter(showChatListView, R.layout.chat_row, chatArrayList);
-		showChatListView.setAdapter(chatListAdapter);
+		//Create the addChatGroupButton that is ALWAYS display under chat tab and
+		//launches add/remove chat group method
+		Button addChatGroupButton = (Button)findViewById(R.id.add_chat_group);
+		
+		addChatGroupButton.setBackgroundResource(R.drawable.timepicker_up_normal);
+		
+		//Test setup of "
+		Button 								localButton;
+		
+		tabRow = (LinearLayout)findViewById(R.id.tab_row);
+		
+		chatPostsView = (ListView)findViewById(R.id.show_chat);
+		
+		for (int i = 0; i < 3; i++)
+		{
+			localButton = makeGenericButton(i, Integer.toString(i), tabRow.getContext());
+			buttonArrayList.add(localButton);
+			
+			//can see all the buttons all the time, but you don't add below b/c you see ONE listview at a time!!!
+			tabRow.addView(localButton);
+			
+			chatPostsAdapterList.add( new ArrayAdapter<String>(chatPostsView.getContext(), R.layout.chat_row, new ArrayList<String>()));
+			
+			for (int j = 0; j < 40; j++)
+			{
+				chatPostsAdapterList.get(chatPostsAdapterList.size() - 1).add(Integer.toString(i + j));
+			}
+		}
+		
+		
+		chatPostsView.setAdapter(chatPostsAdapterList.get(0));
+		buttonArrayList.get(0).setBackgroundResource(android.R.color.background_light);
 		
 		//Create field to enter chats to send
 		enterChat = (EditText)findViewById(R.id.enter_chat);
@@ -278,6 +325,23 @@ public class FirstResponder extends TabActivity
 	 * Method to launch Stream Chooser view that allows stream to be chosen and stream
 	 * value returned to FirstResponder
 	*/
+    
+    private void createNotification(String ticker, String title, String text, int intentID)
+    {
+    	Notification notification = new Notification(R.drawable.ic_notification_overlay, ticker, System.currentTimeMillis());
+    	Intent notificationIntent = new Intent(this, this.getClass());
+    	PendingIntent contentIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
+    	
+    	/*long[] vibTimes = {0, 100, 200, 300};
+    	enteringNotification.vibrate = vibTimes;*/
+    	
+    	notification.defaults 	= Notification.DEFAULT_ALL;
+    	notification.flags  		= Notification.FLAG_AUTO_CANCEL;
+    	notification.setLatestEventInfo(getApplicationContext(), title, text, contentIntent);
+    	
+    	notifier.notify(intentID, notification);
+    }
+    
 	private void sendToStreamChooser()
 	{
 		//Build Intent, Bundle for the Intent, and Extras to go inside Bundle
@@ -307,22 +371,70 @@ public class FirstResponder extends TabActivity
 		startActivity(startFullScreenIntent);
 	}
 	
+	public void receiveChat(String chatGroup, String chatString)
+	{
+		for (int i=0; i < chatGroupIDList.size(); i++)
+		{
+			if (chatGroup.equalsIgnoreCase(chatGroupIDList.get(i)))
+			{
+				chatPostsAdapterList.get(i).add(chatString);
+				//Highlight button-tab of chat window just updated so the user knows a new chat is there
+				//Button button = buttonArrayList.get(i);
+				//button.setBackgroundDrawable(android.R.drawable.btn_star);
+				
+				//IF the user wants chat popups and is NOT already looking at the chat tab.....
+				if (showChatPopUps && myTabHost.getCurrentTabTag() != CHAT_TAB_TAG)
+				{
+					sendChatToast(chatGroup, chatString);
+				}
+			}
+		}
+	}
+	
+	public void sendChatToast(String chatGroup, String chatString)
+	{
+		Toast toast = Toast.makeText(getApplicationContext(), chatGroup + ": " + chatString, Toast.LENGTH_LONG);
+		toast.show();
+	}
+	
 	public void sendChat(String chatString)
 	{
+		
 		//FOR TESTING PURPOSES ONLY...............................
-		chatArrayList.add(chatString);
+		/*chatArrayList.add(chatString);
 		enterChat.setText("");
-		showChatListView.setAdapter(chatListAdapter);
+		showChatListView.setAdapter(chatListAdapter);*/
 	}
 	
 	//This method gets invoked by the actual chat code to update the chat ListView and possibly video pop-ups
-	public void receiveChat(String chatString)
+/*	public void receiveChat(String chatString)
 	{
 		//IF seeChatPopUp is selected AND we're not in the chat tab, show chat posts as Toast
 		if (showChatPopUps && ! myTabHost.getCurrentTabTag().equalsIgnoreCase(CHAT_TAB_TAG))
 		{
 			Toast.makeText(this.getBaseContext(), chatString, Toast.LENGTH_LONG);
 		}
+	}*/
+	
+	private Button makeGenericButton(int index, String title,  Context context )
+	{
+		Button button = new Button(context);
+		
+		LayoutParams buttonLayout =  new LayoutParams( LinearLayout.LayoutParams.FILL_PARENT, 
+				LinearLayout.LayoutParams.WRAP_CONTENT,
+				1);
+		buttonLayout.setMargins(0, 1, 3, 0);
+		
+		button.setLayoutParams( buttonLayout );
+		button.setBackgroundResource(android.R.color.darker_gray);
+		
+		button.setId(index);
+		button.setText(title);
+		
+		button.setOnClickListener(buttonOnClickListener);
+		
+		return button;
+		
 	}
 	
 	public void login(String username, String password)
@@ -342,9 +454,9 @@ public class FirstResponder extends TabActivity
 	
 	public void testLoadChatListView()
 	{
-		chatArrayList.add("one");
+		/*chatArrayList.add("one");
 		chatArrayList.add("two");
-		chatArrayList.add("three");
+		chatArrayList.add("three");*/
 	}
 	
 	// *********************************** VIDEO TAB LISTENERS *******************************************
@@ -403,9 +515,33 @@ public class FirstResponder extends TabActivity
 		{
 			sendChat(enterChat.getText().toString());
 			hideKeyboard(v);
+			enterChat.setText("");
 		}
     	
     };
+    
+    private Button.OnClickListener buttonOnClickListener = new Button.OnClickListener()
+	{
+		
+		@Override
+		public void onClick(View v)
+		{
+			int index = v.getId();
+			
+			chatPostsView.setAdapter(chatPostsAdapterList.get(index));
+			
+			Iterator<Button> iterator = buttonArrayList.iterator();
+			
+			while (iterator.hasNext())
+			{
+				iterator.next().setBackgroundResource(android.R.color.darker_gray);
+			}
+			
+			v.setBackgroundResource(android.R.color.background_light);
+			
+		}
+		
+	};
 	
 // *********************************LOGIN/OPTION TAB LISTENERS**************************************
     
@@ -471,9 +607,9 @@ public class FirstResponder extends TabActivity
     {
 
 		@Override
-		public void onClick(View v) {
-			// TODO Put chat icons on/off here
-			
+		public void onClick(View v) 
+		{
+			createNotification("Test ticker", "Test Title", "Test text", INTENT_KEY_ENTERING_NOTIFICATION);	
 		}
     	
     };
@@ -503,12 +639,12 @@ public class FirstResponder extends TabActivity
         //End copy from stackoverflow
 	}
 	
-    private ListAdapter makeListAdapter(View v, int rowContext, ArrayList arrayList)
+/*    private ListAdapter makeListAdapter(View v, int rowContext, ArrayList arrayList)
     {
     	ListAdapter listAdapter = new ArrayAdapter<Adapter>(v.getContext(), rowContext, arrayList);
     	
     	return listAdapter;
-    }
+    }*/
 	
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data)
