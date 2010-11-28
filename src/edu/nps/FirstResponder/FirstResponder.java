@@ -12,13 +12,11 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
-import android.view.Gravity;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
@@ -89,6 +87,7 @@ public class FirstResponder extends TabActivity
 	MediaController		mediaController;
 	VideoView 				videoViewer;
 	Uri 								video;
+	Button						chooseAreaOfInterest;
 	Button 						chooseStreamButton;
 	Button						fullScreenButton;
 	ToggleButton			seeChatToggleButton;
@@ -231,6 +230,10 @@ public class FirstResponder extends TabActivity
         mediaController = new MediaController(this);
         mediaController.setAnchorView(videoViewer);
         
+        //Create area of interest button
+        chooseAreaOfInterest = (Button)findViewById(R.id.aoi_button);
+        chooseAreaOfInterest.setOnClickListener(onChooseAOIButtonClicked);
+        
         //Create choose stream button
 		chooseStreamButton = (Button)findViewById(R.id.choose_stream);
 		chooseStreamButton.setOnClickListener(onChooseStreamButtonClicked);
@@ -354,6 +357,19 @@ public class FirstResponder extends TabActivity
 		//Tell stream chooser to use Request Code Stream to identify type of return intent
 		startActivityForResult(startStreamChooserIntent, REQ_CODE_STREAM);
 	}
+	
+	private void sendToMapActivity()
+	{
+		Intent	startMapActivityIntent		= new Intent(FirstResponder.this, MapsActivity.class);
+		
+		Bundle	startMapActivityBundle = new Bundle();
+		
+		startMapActivityIntent.putExtras(startMapActivityBundle);
+		
+		startActivity(startMapActivityIntent);
+		
+		//put bundle stuff here........
+	}
 
 	private void sendToFullScreen()
 	{
@@ -466,6 +482,20 @@ public class FirstResponder extends TabActivity
 		public void onClick(View v) 
 		{
 			sendToStreamChooser();
+		}
+    	
+    };
+    
+    private Button.OnClickListener onChooseAOIButtonClicked = new Button.OnClickListener()
+    {
+
+		@Override
+		public void onClick(View v)
+		{
+			//start Map Activity
+			sendToMapActivity();
+			
+			
 		}
     	
     };
