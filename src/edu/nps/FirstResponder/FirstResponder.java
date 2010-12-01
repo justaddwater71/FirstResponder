@@ -360,7 +360,7 @@ public class FirstResponder extends TabActivity
 	
 	private void sendToMapActivity()
 	{
-		Intent	startMapActivityIntent		= new Intent(FirstResponder.this, MapsActivity.class);
+		Intent	startMapActivityIntent		= new Intent(this, MapsActivity.class);
 		
 		Bundle	startMapActivityBundle = new Bundle();
 		
