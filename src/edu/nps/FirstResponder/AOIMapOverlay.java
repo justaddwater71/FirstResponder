@@ -1,5 +1,7 @@
 package edu.nps.FirstResponder;
 
+import java.util.ArrayList;
+
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -48,6 +50,19 @@ public class AOIMapOverlay extends Overlay {
 		Point point2 = new Point();
 
 		if (((MapsActivity) parent).isAoiSelection()) {
+			Paint paint = new Paint();
+			ArrayList<AreaOfInterest> temp = ((MapsActivity) parent).getAOIList();
+			for(int i = 0; i < temp.size(); i++) {
+				
+				paint.setColor(Color.GRAY);
+				paint.setAlpha(80); // transparency
+				AreaOfInterest aAoi = temp.get(i);
+				mapView.getProjection().toPixels(aAoi.getGeoPt1(), point1);
+				mapView.getProjection().toPixels(aAoi.getGeoPt2(), point2);
+				canvas.drawRect(point1.x, point1.y, point2.x, point2.y, paint);			
+			}
+			
+			
 			displayWidth = mapView.getWidth();
 			displayHeight = mapView.getHeight();
 
@@ -71,7 +86,6 @@ public class AOIMapOverlay extends Overlay {
 			int line4_x2 = displayWidth;
 			int line4_y2 = (displayHeight / 3) * 2;
 
-			Paint paint = new Paint();
 			paint.setColor(Color.BLACK);
 			canvas.drawLine(line1_x1, line1_y1, line1_x2, line1_y2, paint);
 			canvas.drawLine(line2_x1, line2_y1, line2_x2, line2_y2, paint);

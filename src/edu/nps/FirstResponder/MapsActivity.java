@@ -2,6 +2,7 @@ package edu.nps.FirstResponder;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
 
 import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapActivity;
@@ -15,6 +16,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+
 public class MapsActivity extends MapActivity {
 	MapView mapView;
 	MapController mc;
@@ -22,32 +24,24 @@ public class MapsActivity extends MapActivity {
 	boolean isSelectAOI = false;
 	private ArrayList<AreaOfInterest> aoiList = new ArrayList<AreaOfInterest>(); 
 	private boolean debugMode = false;
+	private long delay = 60000; // initial delay before execution
+	private long period = 60000; // time interval between tasks
+	GeoPoint curLocation = null;
 
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.map_main);
+		setContentView(R.layout.mapview);
 
 		mapView = (MapView) findViewById(R.id.mapView);
 		mapView.setBuiltInZoomControls(true);
 		mc = mapView.getController();
+		LocationTimerTask locTimerTask = new LocationTimerTask();
+		locTimerTask.setParent(this);
+		Timer locTimer = new Timer();
+		locTimer.schedule(locTimerTask, delay, period);
 
-//		String coordinates[] = { "1.352566007", "103.78921587" };
-//		double lat = Double.parseDouble(coordinates[0]);
-//		double lng = Double.parseDouble(coordinates[1]);
-//
-//		String coordinates2[] = { "1.362566007", "103.79921587" };
-//		double lat2 = Double.parseDouble(coordinates2[0]);
-//		double lng2 = Double.parseDouble(coordinates2[1]);
-//
-//		GeoPoint geoPoint1 = new GeoPoint((int) (lat * 1E6), (int) (lng * 1E6));
-//		GeoPoint geoPoint2 = new GeoPoint((int) (lat2 * 1E6),
-//				(int) (lng2 * 1E6));
-//		mc = mapView.getController();
-//		mc.animateTo(geoPoint1);
-//		mc.setZoom(17);
-//		mapView.invalidate();
 		AOIMapOverlay mapOverlay = new AOIMapOverlay(this);
 
 		List<Overlay> listOfOverlays = mapView.getOverlays();
@@ -72,9 +66,19 @@ public class MapsActivity extends MapActivity {
 			public void onClick(View v) {
 				// Perform action on click
 				enableAoiSelection();
+				String aoiListString = "Area Of Interest List\n";
+				if(aoiList.isEmpty()) {
+					aoiListString += "No area selected";
+				}
+				for(int i = 0; i < aoiList.size(); i++ ) {
+					aoiListString += "Area " + (i+1) + ": \n";
+					AreaOfInterest aAoi = aoiList.get(i);
+					aoiListString += aAoi.getPt1Latitude() + "," + aAoi.getPt1Longitude();
+					aoiListString += " to " + aAoi.getPt2Latitude() + "," + aAoi.getPt2Longitude() + "\n";
+				}
 				Toast.makeText(
 						getBaseContext(),
-						"Click on a grid to select an Area of Interest",
+						"Click on a grid to select an Area of Interest\n" + aoiListString,
 						Toast.LENGTH_SHORT).show();
 				mc.stopPanning();
 			}
@@ -96,6 +100,10 @@ public class MapsActivity extends MapActivity {
 	
 	public boolean isAoiSelection() {
 		return isSelectAOI;
+	}
+	
+	public GeoPoint getCurLocation() {
+		return curLocation;
 	}
 	
 	/*
@@ -126,6 +134,7 @@ public class MapsActivity extends MapActivity {
 			double lng = location.getLongitude();
 
 			p = new GeoPoint((int) (lat * 1E6), (int) (lng * 1E6));
+			curLocation = new GeoPoint((int) (lat * 1E6),  (int) (lng * 1E6));
 			mc.animateTo(p);
 			mc.setZoom(17);
 			mapView.invalidate();

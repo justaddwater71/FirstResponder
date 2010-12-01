@@ -230,6 +230,7 @@
 				>
 
 				<Button
+					android:id="@+id/aoi_button"
 					android:layout_width="fill_parent"
 					android:layout_height="wrap_content"
 					android:textSize="@dimen/vert_button_text_size"

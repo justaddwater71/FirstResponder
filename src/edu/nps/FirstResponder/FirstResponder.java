@@ -120,7 +120,7 @@ public class FirstResponder extends TabActivity
     {
     	switch (this.getResources().getConfiguration().orientation)
     	{
-    	case Configuration.ORIENTATION_PORTRAIT:
+    	/*case Configuration.ORIENTATION_PORTRAIT:
     		setContentView(R.layout.main);
     		tabIcons = true;
     	  break;
@@ -131,7 +131,7 @@ public class FirstResponder extends TabActivity
     	case Configuration.ORIENTATION_SQUARE:
     		setContentView(R.layout.main);
     		tabIcons = true;
-    	  break;
+    	  break;*/
     	default:
     		setContentView(R.layout.main);
     		tabIcons = true;
