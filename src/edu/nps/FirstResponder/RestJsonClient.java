@@ -88,6 +88,7 @@ public class RestJsonClient {
 				json = new JSONObject(result);
 
 				instream.close();
+				
 			}
 
 		} catch (ClientProtocolException e) {

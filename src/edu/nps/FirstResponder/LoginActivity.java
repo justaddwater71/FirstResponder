@@ -100,7 +100,7 @@ public class LoginActivity extends Activity implements OnClickListener {
 
 		// load up the layout
 
-		setContentView(R.layout.login_main);
+		setContentView(R.layout.login_main); //FIXME this should not reference the main main -- I'm doofing this. --JHG
 
 		// get the button resource in the xml file and assign it to a local
 		// variable of type Button
@@ -184,6 +184,17 @@ public class LoginActivity extends Activity implements OnClickListener {
 				Log.i(DEB_TAG, "Requesting to " + address);
 
 				JSONObject json = RestJsonClient.connect(address, sUserName, sPassword);
+				
+				//added by JHG so other Activities can access username and password
+				settings.edit().putString("Login", sUserName);
+				
+				settings.edit().putString("Password", sPassword);
+				
+/*				Timer t = new Timer();
+				
+				LocationTimerTask locationTimerTask = new LocationTimerTask();
+				
+				t.schedule(locationTimerTask, 1000, 60000);*/
 
 			} catch (Exception e) {// (JSONException e) {
 

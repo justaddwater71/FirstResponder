@@ -9,13 +9,20 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
@@ -29,7 +36,9 @@ import android.widget.AdapterView.OnItemClickListener;
 public class StreamChooser extends Activity 
 {
 	ListView	streamListView;
-	EditText 	enterStream;DialogInterface.OnClickListener atRootButtonListener = new DialogInterface.OnClickListener()
+	EditText 	enterStream;
+	
+	DialogInterface.OnClickListener atRootButtonListener = new DialogInterface.OnClickListener()
 	{
 		//@Override
 		public void onClick(DialogInterface arg0, int arg1) 
@@ -37,6 +46,7 @@ public class StreamChooser extends Activity
 			//Do nothing
 		}
 	};
+	
 	Button 								setStream;
 	Button 								cancelSetStream;
 	ArrayList<String> 			streamLabels = new ArrayList<String>();
@@ -89,6 +99,57 @@ public class StreamChooser extends Activity
 		}
     	
     };
+    
+    public void checkStreamAlert(String latitude, String longitude, double aoiLat, double aoiLong)
+    {
+    	double feedLat = Double.parseDouble(latitude);
+    	double feedLong = Double.parseDouble(longitude);
+    	
+    	//if ()//FIXME need AOI lat/long NOT MY lat/long -- GO TO BED!!!
+    	
+    }
+    
+    private void jsonToStreamList(JSONObject outerJSON, double myLat, double myLong) throws JSONException
+    {
+    	if (outerJSON != null)
+    	{
+    		JSONObject json = outerJSON.getJSONObject("feed");
+    		streamListAdapter.add(json.getString("description"));
+    		streamFQDN.add(json.getString("url"));
+    		checkStreamAlert(json.getString("latitude"), json.getString("longitude"), myLat, myLong);
+    		
+    	}
+    }
+    
+    public class StreamReceiver extends BroadcastReceiver{
+        // Display an alert that we've received a message.    
+        @Override 
+        public void onReceive(Context context, Intent intent){
+            Bundle bundle = intent.getExtras();
+            
+            double myLat = bundle.getDouble("latitude");
+            double myLong = bundle.getDouble("longitude");
+            
+            try
+			{
+				JSONArray jsonArray = new JSONArray(bundle.getString("feeds"));
+				JSONObject json = null;
+			
+			streamListAdapter.clear();
+			
+			for (int i = 0; i < jsonArray.length(); i++)
+			{
+				json = jsonArray.getJSONObject(i);
+			}
+			
+			jsonToStreamList(json, myLat, myLong);
+			
+			} catch (JSONException e)
+			{
+				Log.e("JSON", "feeds array did not show up correctly", e);
+			}
+       }
+    };  
     
     public void getStreams()
     {

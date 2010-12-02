@@ -68,19 +68,19 @@ public class FirstResponder extends TabActivity
 
 	//Login Layout
 	TabSpec						loginOptionTabSpec;
-	ViewFlipper				loginOptionViewFlipper;
+	/*ViewFlipper				loginOptionViewFlipper;
 	RelativeLayout			loginLayout;
 	RelativeLayout			optionLayout;
 	EditText 						username;
 	EditText 						password;
 	Button 						loginButton;
-	Button 						optionsButton;
+	Button 						optionsButton;*/
 
 	//Option Layout Data Members
-	ToggleButton 			showOptionChatToggleButton;
+/*	ToggleButton 			showOptionChatToggleButton;
 	ToggleButton 			streamSelectionTypeToggleButton;
 	ToggleButton 			showChatIconsToggleButton;
-	Button						optionsDoneButton;
+	Button						optionsDoneButton;*/
 
 	//Video Tab Data Members
 	TabSpec						videoTabSpec;
@@ -174,10 +174,10 @@ public class FirstResponder extends TabActivity
 		{
 			loginOptionTabSpec.setIndicator("Login");
 		}
-		loginOptionTabSpec.setContent(R.id.login_option_flipper);
+		loginOptionTabSpec.setContent(new Intent (this, LoginActivity.class));
 		myTabHost.addTab(loginOptionTabSpec);
 
-		loginOptionViewFlipper	= (ViewFlipper)findViewById(R.id.login_option_flipper);
+		/*loginOptionViewFlipper	= (ViewFlipper)findViewById(R.id.login_option_flipper);
 
 		//*************************** LOGIN VIEW ***************************************
 		//Create items to display in option/login tab
@@ -204,7 +204,7 @@ public class FirstResponder extends TabActivity
 		showChatIconsToggleButton				= (ToggleButton)findViewById(R.id.show_icon_option_toggle);
 		showChatIconsToggleButton.setOnClickListener(onShowChatIconsToggleButtonClicked);
 		optionsDoneButton								= (Button)findViewById(R.id.options_done_button);
-		optionsDoneButton.setOnClickListener(onOptionsDoneButtonClicked);
+		optionsDoneButton.setOnClickListener(onOptionsDoneButtonClicked);*/
     }
     
     private void createVideoTab()
@@ -220,7 +220,7 @@ public class FirstResponder extends TabActivity
 		{
 			videoTabSpec.setIndicator("Video");
 		}
-		videoTabSpec.setContent(R.id.video_viewer);
+		videoTabSpec.setContent( R.id.video_viewer);
 		myTabHost.addTab(videoTabSpec);
 
 		//Create items to display in video viewer tab
@@ -242,10 +242,10 @@ public class FirstResponder extends TabActivity
 		fullScreenButton.setOnClickListener(onFullScreenButtonClicked);
 
 		//Create see chat pop ups toggle button with cool green light
-		seeChatToggleButton = (ToggleButton)findViewById(R.id.see_chat);
+/*		seeChatToggleButton = (ToggleButton)findViewById(R.id.see_chat);
 		seeChatToggleButton.setChecked(true);
 		seeChatToggleButton.setOnClickListener(onSeeChatToggleButtonClicked);
-		seeChatToggleButton.setOnClickListener(onSeeChatToggleButtonClicked);
+		seeChatToggleButton.setOnClickListener(onSeeChatToggleButtonClicked);*/
     }
     
     private void createChatTab()
@@ -500,7 +500,7 @@ public class FirstResponder extends TabActivity
     	
     };
     
-    private Button.OnClickListener onSeeChatToggleButtonClicked = new Button.OnClickListener()
+/*    private Button.OnClickListener onSeeChatToggleButtonClicked = new Button.OnClickListener()
     {
 
 		public void onClick(View v) 
@@ -517,7 +517,7 @@ public class FirstResponder extends TabActivity
 			}
 		}
     	
-    };
+    };*/
     
     private Button.OnClickListener onFullScreenButtonClicked = new Button.OnClickListener()
     {
@@ -576,7 +576,7 @@ public class FirstResponder extends TabActivity
 // *********************************LOGIN/OPTION TAB LISTENERS**************************************
     
  // *********************************** LOGIN LAYOUT LISTENERS **************************************
-    private Button.OnClickListener onLoginButtonClicked = new Button.OnClickListener()
+    /*private Button.OnClickListener onLoginButtonClicked = new Button.OnClickListener()
     {
 
 		public void onClick(View view) 
@@ -601,10 +601,10 @@ public class FirstResponder extends TabActivity
 			loginOptionViewFlipper.showNext();
 		}
     	
-    };
+    };*/
     
     // ****************** OPTION LAYOUT LISTENERS ********************************
-    private Button.OnClickListener onShowOptionChatToggleButtonClicked = new Button.OnClickListener()
+/*    private Button.OnClickListener onShowOptionChatToggleButtonClicked = new Button.OnClickListener()
     {
 
 		public void onClick(View v) 
@@ -621,9 +621,9 @@ public class FirstResponder extends TabActivity
 			}
 		}
     	
-    };
+    };*/
     
-    private Button.OnClickListener onStreamSelectionTypeToggleButtonClicked = new Button.OnClickListener()
+/*    private Button.OnClickListener onStreamSelectionTypeToggleButtonClicked = new Button.OnClickListener()
     {
 
 		public void onClick(View v) 
@@ -631,9 +631,9 @@ public class FirstResponder extends TabActivity
 			//Do grid vs list thing here.
 		}
     	
-    };
+    };*/
     
-    private Button.OnClickListener onShowChatIconsToggleButtonClicked = new Button.OnClickListener()
+/*    private Button.OnClickListener onShowChatIconsToggleButtonClicked = new Button.OnClickListener()
     {
 
 		@Override
@@ -642,9 +642,9 @@ public class FirstResponder extends TabActivity
 			createNotification("Test ticker", "Test Title", "Test text", INTENT_KEY_ENTERING_NOTIFICATION);	
 		}
     	
-    };
+    };*/
     
-    private Button.OnClickListener onOptionsDoneButtonClicked = new Button.OnClickListener()
+/*    private Button.OnClickListener onOptionsDoneButtonClicked = new Button.OnClickListener()
     {
 
 		@Override
@@ -654,7 +654,7 @@ public class FirstResponder extends TabActivity
 
 		}
     	
-    };
+    };*/
     
     
  // ******************* ACTIVITY MANAGEMENT METHODS ***********************
