@@ -1,8 +1,12 @@
 package edu.nps.FirstResponder;
 
+
+import java.io.Serializable;
+
 import com.google.android.maps.GeoPoint;
 
-public class AreaOfInterest {
+public class AreaOfInterest
+{
 	private GeoPoint geoPt1;
 	private GeoPoint geoPt2;
 	
@@ -42,4 +46,5 @@ public class AreaOfInterest {
 	public double getPt2Longitude() {
 		return ((double)geoPt2.getLongitudeE6())/1E6;
 	}
+
 }

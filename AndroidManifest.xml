@@ -11,11 +11,7 @@
 		android:debuggable="true"
 	>
 	
-	<receiver android:name=".StreamReceiver">
-            <intent-filter>
-               <action android:name="geo_update" />
-            </intent-filter>
-    </receiver> 
+	 
 	
 	    <uses-library android:name="com.google.android.maps" />
 		<activity
@@ -31,10 +27,7 @@
 			</intent-filter>
 		</activity>
 
-		<activity
-			android:name="StreamChooser"
-			android:label="@string/stream_chooser_name"
-			android:theme="@android:style/Theme.NoTitleBar" android:screenOrientation="portrait"/>
+		
 
 		<activity
 			android:name="FullScreenVideo"
@@ -48,6 +41,7 @@
 			android:theme="@android:style/Theme.NoTitleBar" />
 			
 	<activity android:name="LoginActivity" android:theme="@android:style/Theme.NoTitleBar" android:label="@string/app_name"></activity>
+
 
 </application>
 	

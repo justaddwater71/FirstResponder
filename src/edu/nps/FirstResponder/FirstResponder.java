@@ -1,19 +1,34 @@
 package edu.nps.FirstResponder;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import android.app.AlertDialog;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.TabActivity;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.DialogInterface.OnClickListener;
 import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -27,6 +42,7 @@ import android.widget.Toast;
 import android.widget.ToggleButton;
 import android.widget.VideoView;
 import android.widget.ViewFlipper;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.TabHost.TabSpec;
 
@@ -51,13 +67,23 @@ public class FirstResponder extends TabActivity
 
 	//Full Screen Intent Extra Keys
 	public static final String		INTENT_KEY_FULLSCREEN	= "fullscreen";
-
+	
 	//Notification Intent keys
 	public static final int			INTENT_KEY_ENTERING_NOTIFICATION 	= 2;
 	public static final int			INTENT_KEY_LEAVING_NOTIFICATION 		= 3;
 
 	//Stream filename
 	public static final String		STREAM_FILE							= "stream_file.txt";
+	
+	//StreamChooser Intent ACTION
+	public static final String		INTENT_ACTION_GEOUPDATE = "geo_update";
+	public static final String		INTENT_KEY_GEOUPDATE		= "geo_update";
+	
+	//MapView Intent ACTION
+	public static final String		INTENT_ACTION_AOI = "aoi_update";
+	
+	//MapVIew Intent keys
+	public static final String		INTENT_KEY_AOILIST = "aoi_list";
 
 	private NotificationManager notifier;
 
@@ -84,6 +110,9 @@ public class FirstResponder extends TabActivity
 
 	//Video Tab Data Members
 	TabSpec						videoTabSpec;
+	ViewFlipper				videoChooserViewFlipper;
+	LinearLayout				streamChooserLayout;
+	RelativeLayout			videoLayout;
 	MediaController		mediaController;
 	VideoView 				videoViewer;
 	Uri 								video;
@@ -92,7 +121,27 @@ public class FirstResponder extends TabActivity
 	Button						fullScreenButton;
 	ToggleButton			seeChatToggleButton;
 	boolean					showChatPopUps 					= false;
-
+	double[] 					aoiDoubles;
+	
+	//Stream Choose (under Video Tab) Members
+	ListView	streamListView;
+	EditText 	enterStream;
+	
+	DialogInterface.OnClickListener atRootButtonListener = new DialogInterface.OnClickListener()
+	{
+		//@Override
+		public void onClick(DialogInterface arg0, int arg1) 
+		{
+			//Do nothing
+		}
+	};
+	
+	Button 								setStream;
+	Button 								cancelSetStream;
+	ArrayList<String> 			streamLabels = new ArrayList<String>();
+	ArrayList<String> 			streamFQDN = new ArrayList<String>();
+	ArrayAdapter	<String>	streamListAdapter;
+	
 	//Chat Tab Data Members
 	TabSpec									chatTabSpec;
 	ListAdapter							chatListAdapter;
@@ -105,15 +154,36 @@ public class FirstResponder extends TabActivity
 	ArrayAdapter<String>		chatPostsAdapter;
 	ArrayList<String>				chatGroupIDList			= new ArrayList<String>();
 
+	//BroadcastReceiver for streams variables
+	StreamReceiver 					streamReceiver;
+	IntentFilter								streamIntentFilter;
+	
+	//BroadcastReceiver for AOI variables
+	AOIReceiver							aoiReceiver;
+	IntentFilter								aoiIntentFilter;
+	
 	//Constructors
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) 
     {
         super.onCreate(savedInstanceState);
-        
         mainView();
+        
+        streamReceiver 		= new StreamReceiver();
+    	streamIntentFilter 	= new IntentFilter(INTENT_ACTION_GEOUPDATE);
+    	registerReceiver(streamReceiver, streamIntentFilter);
+    	
+    	aoiReceiver				= new AOIReceiver();
+    	aoiIntentFilter			= new IntentFilter(INTENT_ACTION_AOI);
     }
+    
+/*    public void onResume()
+    {
+    	frStreamReceiver = new FRStreamReceiver();
+    	streamIntentFilter = new IntentFilter(INTENT_ACTION_GEOUPDATE);
+    	registerReceiver(frStreamReceiver, streamIntentFilter);
+    }*/
     
     //Methods
     private void mainView()
@@ -210,7 +280,8 @@ public class FirstResponder extends TabActivity
     private void createVideoTab()
     {
     	//********************* VIDEO TAB *******************************
-		//Set up video viewer tab
+    	videoChooserViewFlipper = (ViewFlipper)findViewById(R.id.video_chooser_flipper);
+    	
 		videoTabSpec = myTabHost.newTabSpec(VIDEO_TAB_TAG);
 		if (tabIcons)
 		{
@@ -220,9 +291,15 @@ public class FirstResponder extends TabActivity
 		{
 			videoTabSpec.setIndicator("Video");
 		}
-		videoTabSpec.setContent( R.id.video_viewer);
+		videoTabSpec.setContent( R.id.video_chooser_flipper);
 		myTabHost.addTab(videoTabSpec);
-
+		
+		createVideoView();
+		createStreamChooserView();
+    }
+    
+    private void createVideoView()
+    {
 		//Create items to display in video viewer tab
 
 		//Create view viewer and accompanying media controller
@@ -247,6 +324,229 @@ public class FirstResponder extends TabActivity
 		seeChatToggleButton.setOnClickListener(onSeeChatToggleButtonClicked);
 		seeChatToggleButton.setOnClickListener(onSeeChatToggleButtonClicked);*/
     }
+    
+    private void createStreamChooserView()
+    {
+    	//setContentView(R.layout.stream_chooser);
+    	streamChooserLayout = (LinearLayout)findViewById(R.id.stream_chooser_view);
+    	
+    	//Set up a ListView with clickable rows.  Each row shows a label for a data stream
+    	streamListView 	= (ListView)findViewById(R.id.stream_list);
+    	
+       /* streamFQDN			= FirstResponder.getStreams();*/
+        
+        /*streamLabels 		= getStreamLabels(streamFQDN)*/;
+        
+        //getStreams();
+      
+        streamListAdapter	= new ArrayAdapter<String>(this, R.layout.stream_row, streamLabels);
+        
+        streamListView.setAdapter(streamListAdapter);
+        streamListView.setOnItemClickListener(streamListViewRowListener);
+        
+        enterStream 			= (EditText)findViewById(R.id.enter_stream);
+        
+        setStream 				= (Button)findViewById(R.id.set_stream);
+        cancelSetStream = (Button)findViewById(R.id.cancel_set_stream);
+        
+        setStream.setOnClickListener(onSetStreamClick);
+        
+        cancelSetStream.setOnClickListener(onCancelSetStreamClick);
+    }
+    
+    private OnItemClickListener streamListViewRowListener = new OnItemClickListener() 
+    {
+
+		@Override
+		public void onItemClick(AdapterView<?> arg0, View view, int position, long id) 
+		{
+			enterStream.setText(streamFQDN.get(position));
+		}
+    	
+    };
+    
+    public void checkStreamAlert(String latitude, String longitude, double aoiLat, double aoiLong)
+    {
+    	double feedLat = Double.parseDouble(latitude);
+    	double feedLong = Double.parseDouble(longitude);
+    	
+    	//if ()//FIXME need AOI lat/long NOT MY lat/long -- GO TO BED!!!
+    	
+    }
+    
+    private void jsonToStreamList(JSONObject outerJSON, double myLat, double myLong) throws JSONException
+    {
+    	if (outerJSON != null)
+    	{
+    		JSONObject json = outerJSON.getJSONObject("feed");
+    		streamListAdapter.add(json.getString("description"));
+    		streamFQDN.add(json.getString("url"));
+    		checkStreamAlert(json.getString("latitude"), json.getString("longitude"), myLat, myLong);
+    		
+    	}
+    }
+    
+    /*public void getStreams()
+    {
+    	streamLabels.add("FEED 1");
+    	streamFQDN.add("rtsp://192.168.1.2:8000/stream.sdp");
+    	
+    	try 
+    	{
+    		InputStream				inputStream		= openFileInput(FirstResponder.STREAM_FILE);
+			InputStreamReader streamReader = new InputStreamReader (inputStream);
+			BufferedReader		bufferedReader = new BufferedReader(streamReader);
+			String line;
+			String[] splitTemp = new String[2];
+
+			while ((line = bufferedReader.readLine()) != null)
+			{
+				try
+				{
+					splitTemp = line.split("\t");
+					streamLabels.add(splitTemp[0]);
+					streamFQDN.add(splitTemp[1]);
+				}
+				catch (IndexOutOfBoundsException i)
+				{
+					//Do nothing, bad file
+				}
+			}
+
+			inputStream.close();
+
+		}
+    	//IF no file is found, then make one
+    	catch (FileNotFoundException e) 
+		{
+    		//Do nothing, bad file
+		}
+    	catch (IOException e) 
+		{
+    		//Do nothing, bad file
+		}
+    	
+    }*/
+    
+    private Button.OnClickListener onSetStreamClick = new Button.OnClickListener()
+    {
+
+		public void onClick(View v) 
+		{
+			//Get the text from the edit text box
+			final String enterStreamText = enterStream.getText().toString();
+
+			//If the enter text is left blank, don't update the stream
+			if (enterStreamText != null && ! enterStreamText.equalsIgnoreCase(""))
+			{
+				if (! streamFQDN.contains(enterStreamText))
+				{
+					streamListAdapter.add(enterStreamText);
+
+					//This file is for testing purposes only, we won't be writing streams out in operation
+					try 
+					{
+						OutputStream outputStream 	=	openFileOutput(FirstResponder.STREAM_FILE, Context.MODE_APPEND);
+						final OutputStreamWriter outWriter	=	new OutputStreamWriter(outputStream);
+
+						AlertDialog.Builder alert = new AlertDialog.Builder(v.getContext());
+
+						final Context alertContext = v.getContext();
+
+						alert.setTitle("Stream Label");
+						alert.setMessage("Enter label to use for stream.");
+
+						final EditText newStringLabel = new EditText(v.getContext());
+						alert.setView(newStringLabel);
+
+						alert.setPositiveButton("OK", new OnClickListener()
+						{
+
+							@Override
+							public void onClick(DialogInterface dialog, int which) 
+							{
+								try 
+								{
+									outWriter.write(newStringLabel.getText().toString() + "\t" + enterStreamText);
+								} 
+								catch (IOException e) 
+								{
+									Toast toast = Toast.makeText(alertContext, "Your video stream is set for viewing, but has not been saved to history due to IO error --DARN!!", Toast.LENGTH_LONG);
+									toast.show();
+								}
+							}
+						});
+
+						alert.setCancelable(true);						
+
+						alert.show();
+					} 
+					catch (FileNotFoundException e)
+					{
+						//What?  openFileOutput is both a writer and a file creator.  I've missed something here.
+					}
+/*					catch (IOException i)
+					{
+						Toast toast = Toast.makeText(v.getContext(), "Your video stream is set for viewing, but has not been saved to history due to IO error --DARN!!", Toast.LENGTH_LONG);
+						toast.show();
+					}*/
+				}
+
+				//Build an intent, bundle it, add the stream as an extra, pass it back to the caller
+				/*Intent resultIntent = new Intent();
+
+				Bundle results = new Bundle();
+
+				//Use stream key value from FirstResponder so it can handle it
+				results.putString(FirstResponder.INTENT_KEY_STREAM, enterStreamText);
+
+				resultIntent.putExtras(results);
+
+				//Use the "success" reply code in the response to FirstResponder
+				setResult(FirstResponder.REPLY_CODE_SET_STREAM, resultIntent);*/
+				
+				
+				
+				hideKeyboard(v);
+
+				//Close this view
+				//finish();
+				
+				setStream(enterStreamText); 
+				
+				videoChooserViewFlipper.showPrevious();
+			}
+			else
+			{
+				//Create an alert dialog popup telling user they left the edit text box blank
+				DialogInterface.OnClickListener atRootButtonListener = new DialogInterface.OnClickListener()
+				{
+					//@Override
+					public void onClick(DialogInterface arg0, int arg1) 
+					{
+						//Do nothing
+					}
+				};
+
+				new AlertDialog.Builder(v.getContext())
+				.setTitle("At the top")
+				.setMessage("No stream selected or manually entered. Try again.")
+				.setPositiveButton("OK", atRootButtonListener)
+				.show();
+			}
+		}
+    	
+    };
+    
+    private Button.OnClickListener onCancelSetStreamClick = new Button.OnClickListener()
+    {
+
+		public void onClick(View v) 
+		{
+			videoChooserViewFlipper.showPrevious();
+		}
+    	
+    };
     
     private void createChatTab()
     {
@@ -345,7 +645,7 @@ public class FirstResponder extends TabActivity
     	notifier.notify(intentID, notification);
     }
     
-	private void sendToStreamChooser()
+/*	private void sendToStreamChooser()
 	{
 		//Build Intent, Bundle for the Intent, and Extras to go inside Bundle
 		Intent		startStreamChooserIntent		= new Intent(FirstResponder.this, StreamChooser.class);
@@ -356,8 +656,61 @@ public class FirstResponder extends TabActivity
 
 		//Tell stream chooser to use Request Code Stream to identify type of return intent
 		startActivityForResult(startStreamChooserIntent, REQ_CODE_STREAM);
-	}
+	}*/
 	
+    private void processJSONFeedArray(String feedArrayString)
+    {
+    	JSONArray jsonArray;
+		try
+		{
+			jsonArray = new JSONArray(feedArrayString);
+
+    	if (jsonArray.length() > 0)
+    	{
+    		streamListAdapter.clear();
+    	}
+    	else
+    	{
+    		Log.i("MAYBE EMPTY MAYBE BAD", "This may be bad or may be empty");
+    		return; //TODO It's empty, we'll leave the feeds we have in place.  Real world, we need a CLEAR signal......
+    	}
+    	JSONObject jsonFeed	= null;
+    	JSONObject json 			= null;
+    	String url 						= "";
+    	String description 		= "";
+    	double streamLat		= 0.0;
+    	double streamLong	= 0.0;
+    	
+    	for (int i = 0; i < jsonArray.length(); i++)
+    	{
+    		try
+			{
+    			jsonFeed		= jsonArray.getJSONObject(i);
+				json 				= new JSONObject(jsonFeed.getString("feed"));
+				url					= json.getString("url");
+				description	= json.getString("description");
+				streamLat		= json.getDouble("latitude");
+				streamLong	= json.getDouble("longitude");
+			} 
+    		catch (JSONException e)
+			{
+				//If this list is full of bad JSON, we're losing all our streams
+			}
+    		
+    		streamListAdapter.add(description);
+    		streamFQDN.add(url);
+    		
+    		//FIXME Put AOI vs feed position code here and call the notificationMGR method
+    		
+    	}
+		} 
+		catch (JSONException e1)
+		{
+			// TODO Auto-generated catch block
+			Log.e("JSON ARRAY ERROR", "Did not get a JSONArray out of feedArrayString", e1);
+		}
+    }
+    
 	private void sendToMapActivity()
 	{
 		Intent	startMapActivityIntent		= new Intent(this, MapsActivity.class);
@@ -481,7 +834,8 @@ public class FirstResponder extends TabActivity
 
 		public void onClick(View v) 
 		{
-			sendToStreamChooser();
+			//sendToStreamChooser();
+			videoChooserViewFlipper.showNext();
 		}
     	
     };
@@ -675,6 +1029,35 @@ public class FirstResponder extends TabActivity
     	
     	return listAdapter;
     }*/
+	
+    public class StreamReceiver extends BroadcastReceiver{
+        // Display an alert that we've received a message.    
+        @Override 
+        public void onReceive(Context context, Intent intent){
+            Bundle bundle = intent.getExtras();
+            
+            String feedArrayString = bundle.getString("feeds");
+           Toast toast = Toast.makeText(context, "received feed: " + feedArrayString, Toast.LENGTH_LONG);
+           toast.show();
+           
+			processJSONFeedArray(feedArrayString);
+       }
+    };
+    
+    public class AOIReceiver extends BroadcastReceiver
+    {
+
+		@Override
+		public void onReceive(Context context, Intent intent)
+		{
+			Bundle bundle = intent.getExtras();
+			
+			aoiDoubles = bundle.getDoubleArray(FirstResponder.INTENT_KEY_AOILIST);
+			
+			
+		}
+    	
+    }
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data)

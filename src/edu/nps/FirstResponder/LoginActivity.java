@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 
 import java.util.*;
@@ -13,6 +14,7 @@ import java.lang.reflect.Type;
 import org.json.JSONException;
 import org.json.JSONObject;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.view.Window;
@@ -135,11 +137,24 @@ public class LoginActivity extends Activity implements OnClickListener {
 	 * @see android.view.View.OnClickListener#onClick(android.view.View)
 	 */
 
+	private void hideKeyboard(View view)
+	{
+
+		 //Below hide-keyboard code copied from
+		 //http://stackoverflow.com/questions/1109022/how-to-close-hide-the-android-soft-keyboard
+
+		InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(view.getApplicationWindowToken(), 0);
+        //End copy from stackoverflow
+	}
+	
 	public void onClick(View v) {
 
 		// Handle based on which view was clicked.
 
 		Log.i(DEB_TAG + " onClick ", "onClick");
+		
+		hideKeyboard(v);
 
 		// this gets the resources in the xml file
 
@@ -162,7 +177,7 @@ public class LoginActivity extends Activity implements OnClickListener {
 		// call the backend using Get parameters (discouraged but works good for
 		// this exampl ;) )
 
-		String address = "http://" + FirstResponderParameters.SERVER_HOST + "/feeds/1.json?user_credentials=WNbyY6iHFN1sfalesBg";// + ":" + SERVER_PORT
+		String address = "http://" + FirstResponderParameters.SERVER_HOST;// + "/feeds/1.json?user_credentials=WNbyY6iHFN1sfalesBg"; + ":" + SERVER_PORT
 				//+ "/jbackend.php?action=login&Login=" + sUserName
 				//+ "&Password=" + sPassword + "";
 

@@ -2,6 +2,7 @@ package edu.nps.FirstResponder;
 
 import java.util.TimerTask;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import android.content.Context;
@@ -14,7 +15,7 @@ import com.google.android.maps.GeoPoint;
 
 public class LocationTimerTask extends TimerTask {
 
-	String address = "http://" + FirstResponderParameters.SERVER_HOST + "/users/1/location.json";
+	String address = "http://" + FirstResponderParameters.SERVER_HOST + "location.json"; //"/users/1/location.json";
 	MapsActivity parent;
 	//Added by JHG to support getting feeds information and to later generalize the latitude update
 	SharedPreferences settings;
@@ -43,12 +44,12 @@ public class LocationTimerTask extends TimerTask {
 		
 		Context context = parent.getBaseContext();
 		settings = context.getSharedPreferences(LoginActivity.PREFS_NAME, 0);
-		JSONObject feedsJSON = RestJsonClient.connect("http://" + FirstResponderParameters.SERVER_HOST + "/feeds.json",settings.getString("Login", ""), settings.getString("Password", ""));
+		JSONArray feedsJSON = RestJsonClient.getFeeds("http://" + FirstResponderParameters.SERVER_HOST + "/feeds.json", RestJsonClient.getUser(), RestJsonClient.getPassword());
 		
-		Intent intent = new Intent("geo_update");//FIXME make this a ref to a central string constant
+		//For troubleshooting only
+		//JSONArray feedsJSON = RestJsonClient.getFeeds("http://" + FirstResponderParameters.SERVER_HOST + "/feeds.json", "jhgrady", "fuckemall");
+		Intent intent = new Intent(FirstResponder.INTENT_ACTION_GEOUPDATE);//FIXME make this a ref to a central string constant
 		intent.putExtra("feeds", feedsJSON.toString());
-		intent.putExtra("latitude", lat);
-		intent.putExtra("longitude", lng);
 		parent.sendBroadcast(intent);
 		
 		Log.i(FirstResponderParameters.DEB_TAG, "Feed Timer Task Ended.");

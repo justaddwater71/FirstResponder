@@ -121,39 +121,12 @@ public class StreamChooser extends Activity
     	}
     }
     
-    public class StreamReceiver extends BroadcastReceiver{
-        // Display an alert that we've received a message.    
-        @Override 
-        public void onReceive(Context context, Intent intent){
-            Bundle bundle = intent.getExtras();
-            
-            double myLat = bundle.getDouble("latitude");
-            double myLong = bundle.getDouble("longitude");
-            
-            try
-			{
-				JSONArray jsonArray = new JSONArray(bundle.getString("feeds"));
-				JSONObject json = null;
-			
-			streamListAdapter.clear();
-			
-			for (int i = 0; i < jsonArray.length(); i++)
-			{
-				json = jsonArray.getJSONObject(i);
-			}
-			
-			jsonToStreamList(json, myLat, myLong);
-			
-			} catch (JSONException e)
-			{
-				Log.e("JSON", "feeds array did not show up correctly", e);
-			}
-       }
-    };  
-    
     public void getStreams()
     {
-    	try 
+    	streamLabels.add("FEED 1");
+    	streamFQDN.add("rtsp://192.168.1.2:8000/stream.sdp");
+    	
+    	/*try 
     	{
     		InputStream				inputStream		= openFileInput(FirstResponder.STREAM_FILE);
 			InputStreamReader streamReader = new InputStreamReader (inputStream);
@@ -186,7 +159,7 @@ public class StreamChooser extends Activity
     	catch (IOException e) 
 		{
     		//Do nothing, bad file
-		}
+		}*/
     	
     }
     

@@ -11,13 +11,13 @@
 		android:layout_width="fill_parent"
 		android:layout_height="fill_parent"
 	>
-	
+
 		<TabWidget
 			android:id="@android:id/tabs"
 			android:layout_width="fill_parent"
 			android:layout_height="wrap_content"
 			android:layout_marginRight="3sp" />
-			
+
 		<FrameLayout
 			android:id="@android:id/tabcontent"
 			android:layout_width="fill_parent"
@@ -122,70 +122,132 @@
 				/> </RelativeLayout> </ViewFlipper>
 			-->
 
-			<RelativeLayout
-				android:id="@+id/video_viewer"
+			<ViewFlipper
+				android:id="@+id/video_chooser_flipper"
 				android:layout_width="fill_parent"
 				android:layout_height="fill_parent"
 			>
 
 				<RelativeLayout
-					android:orientation="vertical"
+					android:id="@+id/video_viewer"
 					android:layout_width="fill_parent"
-					android:layout_height="wrap_content"
+					android:layout_height="fill_parent"
 				>
 
-					<VideoView
-						android:id="@+id/video_app"
-						android:layout_centerInParent="true"
-						android:layout_width="wrap_content"
-						android:layout_height="wrap_content" />
+					<RelativeLayout
+						android:orientation="vertical"
+						android:layout_width="fill_parent"
+						android:layout_height="wrap_content"
+					>
+
+						<VideoView
+							android:id="@+id/video_app"
+							android:layout_centerInParent="true"
+							android:layout_width="wrap_content"
+							android:layout_height="wrap_content" />
+
+					</RelativeLayout>
+
+					<ToggleButton
+						android:id="@+id/see_chat"
+						android:layout_width="fill_parent"
+						android:layout_height="wrap_content"
+						android:layout_alignParentBottom="true"
+						android:textSize="@dimen/vert_button_text_size"
+						android:textOn="Chat Pop Ups: On"
+						android:textOff="Chat Pop Ups: Off" />
+
+					<LinearLayout
+						orientation="horizontal"
+						android:layout_width="fill_parent"
+						android:layout_height="wrap_content"
+						android:layout_above="@id/see_chat"
+					>
+
+						<Button
+							android:id="@+id/aoi_button"
+							android:layout_width="fill_parent"
+							android:layout_height="wrap_content"
+							android:textSize="@dimen/vert_button_text_size"
+							android:text="AOI"
+							android:layout_weight="5" />
+
+						<Button
+							android:id="@+id/choose_stream"
+							android:layout_width="fill_parent"
+							android:layout_height="wrap_content"
+							android:layout_weight="4"
+							android:textSize="@dimen/vert_button_text_size"
+							android:text="Stream" />
+
+						<Button
+							android:id="@+id/full_screen"
+							android:layout_width="fill_parent"
+							android:layout_height="wrap_content"
+							android:layout_weight="5"
+							android:textSize="@dimen/vert_button_text_size"
+							android:text="Full" />
+
+					</LinearLayout>
 
 				</RelativeLayout>
 
-				<ToggleButton
-					android:id="@+id/see_chat"
-					android:layout_width="fill_parent"
-					android:layout_height="wrap_content"
-					android:layout_alignParentBottom="true"
-					android:textSize="@dimen/vert_button_text_size"
-					android:textOn="Chat Pop Ups: On"
-					android:textOff="Chat Pop Ups: Off" />
-
 				<LinearLayout
-					orientation="horizontal"
+					android:id="@+id/stream_chooser_view"
 					android:layout_width="fill_parent"
-					android:layout_height="wrap_content"
-					android:layout_above="@id/see_chat"
+					android:layout_height="fill_parent"
+					android:orientation="vertical"
 				>
 
-					<Button
-						android:id="@+id/aoi_button"
+					<ListView
+						android:id="@+id/stream_list"
+						android:layout_weight="0.17"
 						android:layout_width="fill_parent"
-						android:layout_height="wrap_content"
-						android:textSize="@dimen/vert_button_text_size"
-						android:text="AOI"
-						android:layout_weight="5" />
+						android:layout_height="fill_parent"
+						android:textColor="@color/textview_text_color"
+						android:background="@color/listview_background"
+						android:layout_margin="@dimen/listview_margin" />
+					<EditText
+						android:id="@+id/enter_stream"
+						android:layout_weight="0.40"
+						android:layout_width="fill_parent"
+						android:layout_height="fill_parent"
+						android:layout_alignParentLeft="true"
+						android:textColor="@color/textview_text_color"
+						android:textSize="@dimen/edit_text_text_size"
+						android:background="@color/edit_text_background"
+						android:layout_margin="@dimen/edit_text_margin" />
+					<LinearLayout
+						android:orientation="horizontal"
+						android:layout_width="fill_parent"
+						android:layout_height="fill_parent"
+						android:layout_alignParentBottom="true"
+						android:layout_weight="0.43"
+					>
+						<Button
+							android:id="@+id/set_stream"
+							android:layout_weight="0.50"
+							android:layout_width="fill_parent"
+							android:layout_height="fill_parent"
+							android:layout_gravity="left"
+							android:textSize="@dimen/vert_button_text_size"
+							android:text="OK" />
 
-					<Button
-						android:id="@+id/choose_stream"
-						android:layout_width="fill_parent"
-						android:layout_height="wrap_content"
-						android:layout_weight="4"
-						android:textSize="@dimen/vert_button_text_size"
-						android:text="Stream" />
+						<Button
+							android:id="@+id/cancel_set_stream"
+							android:layout_weight="0.50"
+							android:layout_width="fill_parent"
+							android:layout_height="fill_parent"
+							android:layout_gravity="right"
+							android:textSize="@dimen/vert_button_text_size"
+							android:text="Cancel" />
 
-					<Button
-						android:id="@+id/full_screen"
-						android:layout_width="fill_parent"
-						android:layout_height="wrap_content"
-						android:layout_weight="5"
-						android:textSize="@dimen/vert_button_text_size"
-						android:text="Full" />
+					</LinearLayout>
 
 				</LinearLayout>
 
-			</RelativeLayout>
 
+			</ViewFlipper>
 			<LinearLayout
 				android:id="@+id/chat_viewer"
 				android:orientation="vertical"

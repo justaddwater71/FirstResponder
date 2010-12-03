@@ -19,6 +19,7 @@ import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -38,7 +39,7 @@ public class RestJsonClient {
 		user = aUser;
 	}
 
-	public String getPassword() {
+	public static String getPassword() {
 		return password;
 	}
 
@@ -55,6 +56,56 @@ public class RestJsonClient {
 		return connect(url, "", "");
 	}
 
+	public static JSONArray getFeeds(String url, String username,
+			String password) {
+
+		setUser(username);
+		setPassword(password);
+		HttpClient httpclient = new DefaultHttpClient();
+
+		// Prepare a request object
+		HttpGet httpget = new HttpGet(url);
+		httpget.setHeader("Content-type", "application/JSON");
+		httpget.addHeader("Authorization", "Basic " + getCredentials());
+
+		// Execute the request
+		HttpResponse response;
+
+		JSONArray json = new JSONArray();
+
+		try {
+
+			response = httpclient.execute(httpget);
+
+			HttpEntity entity = response.getEntity();
+
+			if (entity != null) {
+
+				// A Simple JSON Response Read
+				InputStream instream = entity.getContent();
+				String result = convertStreamToString(instream);
+				Log.i(DEB_TAG, "Result : " + result);
+
+				json = new JSONArray(result);
+
+				instream.close();
+				
+			}
+
+		} catch (ClientProtocolException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return json;
+	}
+	
 	public static JSONObject connect(String url, String username,
 			String password) {
 
