@@ -5,13 +5,13 @@ import android.util.AttributeSet;
 
 import com.google.android.maps.MapView;
 
-public class MyMapView extends MapView {
+public class MyMapView extends MapView
+{
 
-	public MyMapView(Context context, AttributeSet attrs) {
+	public MyMapView(Context context, AttributeSet attrs)
+	{
 		super(context, attrs);
 		// TODO Auto-generated constructor stub
 	}
-	
-	
 
 }

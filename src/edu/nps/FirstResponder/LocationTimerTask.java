@@ -16,7 +16,7 @@ public class LocationTimerTask extends TimerTask
 {
 
 	String address = "http://" + FirstResponderParameters.SERVER_HOST
-			+ "/location.json"; // "/users/1/location.json";
+			+ "/users/current/location.json"; // "/users/1/location.json";
 	MapsActivity parent;
 	// Added by JHG to support getting feeds information and to later generalize
 	// the latitude update
@@ -58,15 +58,15 @@ public class LocationTimerTask extends TimerTask
 					RestJsonClient.getUser(), RestJsonClient.getPassword());
 
 			Intent intent = new Intent(FirstResponder.INTENT_ACTION_GEOUPDATE);// FIXME
-																				// make
-																				// this
-																				// a
-																				// ref
-																				// to
-																				// a
-																				// central
-																				// string
-																				// constant
+			// make
+			// this
+			// a
+			// ref
+			// to
+			// a
+			// central
+			// string
+			// constant
 			intent.putExtra("feeds", feedsJSON.toString());
 			parent.sendBroadcast(intent);
 		} catch (JSONException e)

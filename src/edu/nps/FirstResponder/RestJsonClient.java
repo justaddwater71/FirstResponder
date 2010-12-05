@@ -25,39 +25,47 @@ import org.json.JSONObject;
 
 import android.util.Log;
 
-public class RestJsonClient {
+public class RestJsonClient
+{
 
 	private static final String DEB_TAG = "Json_Android";
 	private static String user;
 	private static String password;
-	
-	public static String getUser() {
+
+	public static String getUser()
+	{
 		return user;
 	}
 
-	public static void setUser(String aUser) {
+	public static void setUser(String aUser)
+	{
 		user = aUser;
 	}
 
-	public static String getPassword() {
+	public static String getPassword()
+	{
 		return password;
 	}
 
-	public static void setPassword(String aPassword) {
+	public static void setPassword(String aPassword)
+	{
 		password = aPassword;
-	}	
+	}
 
-	private static String getCredentials() {
-		
+	private static String getCredentials()
+	{
+
 		return (Base64.encodeBytes((user + ":" + password).getBytes()));
 	}
-	
-	public static JSONArray connect(String url) throws JSONException {
+
+	public static JSONArray connect(String url) throws JSONException
+	{
 		return connect(url, "", "");
 	}
 
 	public static JSONArray getFeeds(String url, String username,
-			String password) throws JSONException {
+			String password) throws JSONException
+	{
 
 		setUser(username);
 		setPassword(password);
@@ -73,13 +81,15 @@ public class RestJsonClient {
 
 		JSONArray json = new JSONArray();
 
-		try {
+		try
+		{
 
 			response = httpclient.execute(httpget);
 
 			HttpEntity entity = response.getEntity();
 
-			if (entity != null) {
+			if (entity != null)
+			{
 
 				// A Simple JSON Response Read
 				InputStream instream = entity.getContent();
@@ -89,22 +99,25 @@ public class RestJsonClient {
 				json = new JSONArray(result);
 
 				instream.close();
-				
+
 			}
 
-		} catch (ClientProtocolException e) {
+		} catch (ClientProtocolException e)
+		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch (IOException e) {
+		} catch (IOException e)
+		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
 		return json;
 	}
-	
-	public static JSONArray connect(String url, String username,
-			String password) throws JSONException {
+
+	public static JSONArray connect(String url, String username, String password)
+			throws JSONException
+	{
 
 		setUser(username);
 		setPassword(password);
@@ -120,13 +133,15 @@ public class RestJsonClient {
 
 		JSONArray json = new JSONArray();
 
-		try {
+		try
+		{
 
 			response = httpclient.execute(httpget);
 
 			HttpEntity entity = response.getEntity();
 
-			if (entity != null) {
+			if (entity != null)
+			{
 
 				// A Simple JSON Response Read
 				InputStream instream = entity.getContent();
@@ -136,13 +151,15 @@ public class RestJsonClient {
 				json = new JSONArray(result);
 
 				instream.close();
-				
+
 			}
 
-		} catch (ClientProtocolException e) {
+		} catch (ClientProtocolException e)
+		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch (IOException e) {
+		} catch (IOException e)
+		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -150,18 +167,22 @@ public class RestJsonClient {
 		return json;
 	}
 
-	public static void sendLocation(String url, double lat, double lng) {
+	public static void sendLocation(String url, double lat, double lng)
+	{
 		Double latitude = new Double(lat);
 		Double longitude = new Double(lng);
 		sendLocation(url, latitude.toString(), longitude.toString());
 	}
 
-	public static void sendLocation(String url, String lat, String lng) {
+	public static void sendLocation(String url, String lat, String lng)
+	{
 		HttpClient httpclient = new DefaultHttpClient();
 		HttpPut httpPut = new HttpPut();
-		try {
+		try
+		{
 			httpPut.setURI(new URI(url));
-		} catch (URISyntaxException e) {
+		} catch (URISyntaxException e)
+		{
 			e.printStackTrace();
 		}
 		httpPut.setHeader("Content-type", "application/JSON");
@@ -169,21 +190,25 @@ public class RestJsonClient {
 
 		JSONObject json = new JSONObject();
 		JSONObject location = new JSONObject();
-	       
-		try {
+
+		try
+		{
 			location.put("latitude", lat);
-			location.put("longitude", lng);    
+			location.put("longitude", lng);
 			json.put("location", location);
-		} catch (JSONException e) {
+		} catch (JSONException e)
+		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
 		StringEntity stringEntity;
-		try {
+		try
+		{
 			stringEntity = new StringEntity(json.toString());
 			httpPut.setEntity(stringEntity);
-		} catch (UnsupportedEncodingException e) {
+		} catch (UnsupportedEncodingException e)
+		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -191,11 +216,13 @@ public class RestJsonClient {
 		// Execute the request
 		HttpResponse response;
 
-		try {
+		try
+		{
 			response = httpclient.execute(httpPut);
 			HttpEntity entity = response.getEntity();
 
-			if (entity != null) {
+			if (entity != null)
+			{
 
 				// A Simple JSON Response Read
 				InputStream instream = entity.getContent();
@@ -204,10 +231,12 @@ public class RestJsonClient {
 
 				instream.close();
 			}
-		} catch (ClientProtocolException e) {
+		} catch (ClientProtocolException e)
+		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch (IOException e) {
+		} catch (IOException e)
+		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -218,21 +247,28 @@ public class RestJsonClient {
 	 * @param is
 	 * @return String
 	 */
-	public static String convertStreamToString(InputStream is) {
+	public static String convertStreamToString(InputStream is)
+	{
 		BufferedReader reader = new BufferedReader(new InputStreamReader(is));
 		StringBuilder sb = new StringBuilder();
 
 		String line = null;
-		try {
-			while ((line = reader.readLine()) != null) {
+		try
+		{
+			while ((line = reader.readLine()) != null)
+			{
 				sb.append(line + "\n");
 			}
-		} catch (IOException e) {
+		} catch (IOException e)
+		{
 			e.printStackTrace();
-		} finally {
-			try {
+		} finally
+		{
+			try
+			{
 				is.close();
-			} catch (IOException e) {
+			} catch (IOException e)
+			{
 				e.printStackTrace();
 			}
 		}

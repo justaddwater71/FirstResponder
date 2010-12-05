@@ -27,6 +27,7 @@ import android.content.DialogInterface.OnClickListener;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.text.InputType;
 import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -100,10 +101,10 @@ public class FirstResponder extends TabActivity
 	boolean tabIcons;
 	Button currentChatGroup;
 
-	HashMap<String, Boolean>	lastStreamAlert = new HashMap<String, Boolean>();
+	HashMap<String, Boolean> lastStreamAlert = new HashMap<String, Boolean>();
 	int enterNotificationID = 0;
 	int leaveNotificationID = 1;
-	
+
 	// Login/Option Tab Data Members
 
 	// Login Layout
@@ -163,7 +164,7 @@ public class FirstResponder extends TabActivity
 	ArrayList<ArrayAdapter<String>> chatPostsAdapterList = new ArrayList<ArrayAdapter<String>>();
 	ArrayAdapter<String> chatPostsAdapter;
 	ArrayList<String> chatGroupIDList = new ArrayList<String>();
-	JSChatClientService  jsChatClientService;;
+	JSChatClientService jsChatClientService;;
 
 	// BroadcastReceiver for streams variables
 	StreamReceiver streamReceiver;
@@ -210,22 +211,28 @@ public class FirstResponder extends TabActivity
 		loginReceiver = new LoginReceiver();
 		loginIntentFilter = new IntentFilter(INTENT_ACTION_LOGIN_SUCCESSFUL);
 		registerReceiver(loginReceiver, loginIntentFilter);
-		
-		bindService(new Intent(this, JSChatClientService.class), onService, BIND_AUTO_CREATE);
-		
+
+		bindService(new Intent(this, JSChatClientService.class), onService,
+				BIND_AUTO_CREATE);
+
 	}
 
-	private ServiceConnection onService=new ServiceConnection() {
+	private ServiceConnection onService = new ServiceConnection()
+	{
 		@Override
 		public void onServiceConnected(ComponentName className,
-		IBinder rawBinder) {
-		jsChatClientService=((JSChatClientService.LocalBinder)rawBinder).getService();
+				IBinder rawBinder)
+		{
+			jsChatClientService = ((JSChatClientService.LocalBinder) rawBinder)
+					.getService();
 		}
+
 		@Override
-		public void onServiceDisconnected(ComponentName className) {
-		jsChatClientService=null;
+		public void onServiceDisconnected(ComponentName className)
+		{
+			jsChatClientService = null;
 		}
-		};
+	};
 
 	// Methods
 	private void mainView()
@@ -421,45 +428,43 @@ public class FirstResponder extends TabActivity
 		if (d1 <= d2)
 		{
 			return d1;
-		}
-		else
+		} else
 		{
 			return d2;
 		}
 	}
-	
+
 	public double max(double d1, double d2)
 	{
 		if (d1 >= d2)
 		{
 			return d1;
-		}
-		else
+		} else
 		{
 			return d2;
 		}
 	}
-	
-	public void checkStreamAlert(double latitude, double longitude, String url, String description)
+
+	public void checkStreamAlert(double latitude, double longitude, String url,
+			String description)
 	{
 		double pt1Lat;
 		double pt1Long;
 		double pt2Lat;
 		double pt2Long;
 		Boolean streamBool;
-		
+
 		if (lastStreamAlert.containsKey(url))
 		{
-			//Do nothing...
-		}
-		else
+			// Do nothing...
+		} else
 		{
 			lastStreamAlert.put(url, false);
 		}
-		
+
 		streamBool = lastStreamAlert.get(url);
-		
-		for (int i=0; i < aoiDoubles.size(); i++)
+
+		for (int i = 0; i < aoiDoubles.size(); i++)
 		{
 			pt1Lat = aoiDoubles.get(i);
 			i++;
@@ -468,34 +473,39 @@ public class FirstResponder extends TabActivity
 			pt2Lat = aoiDoubles.get(i);
 			i++;
 			pt2Long = aoiDoubles.get(i);
-			//Don't increment i here, the for loop will do it for you.
-			
-			//IF feed location is between point1 and point2 (and pt1/pt2 aren't straddling the International dateline or the poles...)
-			if (min(pt1Lat, pt2Lat) <= latitude && latitude <= max(pt1Lat, pt2Lat)
-					&& min(pt1Long, pt2Long) <= longitude && longitude <= max(pt1Long, pt2Long))
+			// Don't increment i here, the for loop will do it for you.
+
+			// IF feed location is between point1 and point2 (and pt1/pt2 aren't
+			// straddling the International dateline or the poles...)
+			if (min(pt1Lat, pt2Lat) <= latitude
+					&& latitude <= max(pt1Lat, pt2Lat)
+					&& min(pt1Long, pt2Long) <= longitude
+					&& longitude <= max(pt1Long, pt2Long))
 			{
 				if (streamBool)
 				{
-					//Do nothing.....
-				}
-				else
+					// Do nothing.....
+				} else
 				{
 					streamBool = true;
-					//setStream(stream);  Let notifier handle this......
-					createEnterNotification("Stream in AOI", "Stream in AOI", description + " entering AOI", enterNotificationID, url);
+					// setStream(stream); Let notifier handle this......
+					createEnterNotification("Stream in AOI", "Stream in AOI",
+							description + " entering AOI", enterNotificationID,
+							url);
 					enterNotificationID += 2;
 				}
-			}
-			else if (streamBool)
+			} else if (streamBool)
 			{
 				streamBool = false;
-				createLeaveNotification("Stream Leaving AOI", "Stream Leaving AOI", description + "leavingAOI", leaveNotificationID);
+				createLeaveNotification("Stream Leaving AOI",
+						"Stream Leaving AOI", description + "leavingAOI",
+						leaveNotificationID);
 				leaveNotificationID += 2;
 			}
 		}
 
 	}
-	
+
 	private Button.OnClickListener onSetStreamClick = new Button.OnClickListener()
 	{
 
@@ -508,15 +518,13 @@ public class FirstResponder extends TabActivity
 			if (enterStreamText != null
 					&& !enterStreamText.equalsIgnoreCase(""))
 			{
-				
 
 				hideKeyboard(v);
 
 				setStream(enterStreamText);
 
 				videoChooserViewFlipper.showPrevious();
-			} 
-			else
+			} else
 			{
 				// Create an alert dialog popup telling user they left the edit
 				// text box blank
@@ -575,7 +583,6 @@ public class FirstResponder extends TabActivity
 
 		addChatGroupButton.setOnClickListener(onAddChatGroupButtonClicket);
 
-
 		tabRow = (LinearLayout) findViewById(R.id.tab_row);
 
 		chatPostsView = (ListView) findViewById(R.id.show_chat);
@@ -614,52 +621,52 @@ public class FirstResponder extends TabActivity
 	 * stream value returned to FirstResponder
 	 */
 
-	private void createEnterNotification(String ticker, String title, String text,
-			int intentID, String stream)
+	private void createEnterNotification(String ticker, String title,
+			String text, int intentID, String stream)
 	{
 		Notification notification = new Notification(
 				R.drawable.ic_notification_overlay, ticker, System
 						.currentTimeMillis());
-		//Intent notificationIntent = new Intent(this, this.getClass());
+		// Intent notificationIntent = new Intent(this, this.getClass());
 		Intent startFullScreenIntent = new Intent(FirstResponder.this,
 				FullScreenVideo.class);
 
 		Bundle startFullScreenBundle = new Bundle();
 
-		startFullScreenBundle
-				.putString(INTENT_KEY_FULLSCREEN, stream);
+		startFullScreenBundle.putString(INTENT_KEY_FULLSCREEN, stream);
 		// startFullScreenBundle.putString( INTENT_KEY_FULLSCREEN,
 		// "/sdcard/test2.3gp" );
 
 		startFullScreenIntent.putExtras(startFullScreenBundle);
-		PendingIntent contentIntent = PendingIntent.getActivity(this, 0, startFullScreenIntent, 0);
-		
+		PendingIntent contentIntent = PendingIntent.getActivity(this, 0,
+				startFullScreenIntent, 0);
+
 		/*
 		 * long[] vibTimes = {0, 100, 200, 300}; enteringNotification.vibrate =
 		 * vibTimes;
 		 */
-		
+
 		notification.defaults = Notification.DEFAULT_ALL;
 		notification.flags = Notification.FLAG_AUTO_CANCEL;
 		notification.setLatestEventInfo(getApplicationContext(), title, text,
 				contentIntent);
 
-		notifier.notify(intentID, notification);		
+		notifier.notify(intentID, notification);
 	}
 
-	private void createLeaveNotification(String ticker, String title, String text,
-			int intentID)
+	private void createLeaveNotification(String ticker, String title,
+			String text, int intentID)
 	{
 		Notification notification = new Notification(
 				R.drawable.ic_notification_overlay, ticker, System
 						.currentTimeMillis());
-				
+
 		notification.defaults = Notification.DEFAULT_ALL;
 		notification.flags = Notification.FLAG_AUTO_CANCEL;
 
-		notifier.notify(intentID, notification);		
+		notifier.notify(intentID, notification);
 	}
-	
+
 	/*
 	 * private void sendToStreamChooser() { //Build Intent, Bundle for the
 	 * Intent, and Extras to go inside Bundle Intent startStreamChooserIntent =
@@ -710,10 +717,9 @@ public class FirstResponder extends TabActivity
 					streamLong = json.getDouble("longitude");
 					streamListAdapter.add(description);
 					streamFQDN.add(url);
-					
+
 					checkStreamAlert(streamLat, streamLong, url, description);
-				} 
-				catch (JSONException e)
+				} catch (JSONException e)
 				{
 					Log.e("JSON FEED ERROR",
 							"Did not get a JSONObjecty out of feedString", e);
@@ -1134,6 +1140,9 @@ public class FirstResponder extends TabActivity
 				.setMessage("Enter name of the chat group, if group does not already exist, it will be created.");
 
 		final EditText chatGroupName = new EditText(v.getContext());
+
+		chatGroupName.setInputType(InputType.TYPE_CLASS_TEXT);
+
 		alert.setView(chatGroupName);
 
 		alert.setPositiveButton("Join/Create", new OnClickListener()
@@ -1329,9 +1338,10 @@ public class FirstResponder extends TabActivity
 			Bundle bundle = intent.getExtras();
 
 			String feedArrayString = bundle.getString("feeds");
-			/*Toast toast = Toast.makeText(context, "received feed: "
-					+ feedArrayString, Toast.LENGTH_LONG);
-			toast.show();*/
+			/*
+			 * Toast toast = Toast.makeText(context, "received feed: " +
+			 * feedArrayString, Toast.LENGTH_LONG); toast.show();
+			 */
 
 			processJSONFeedArray(feedArrayString);
 		}
@@ -1347,11 +1357,12 @@ public class FirstResponder extends TabActivity
 
 			double[] localAOIDoubles = bundle
 					.getDoubleArray(FirstResponder.INTENT_KEY_AOILIST);
-			
+
 			aoiDoubles.clear();
-			
-			//Okay, I know there are Arrays method to handle this, but they're not working.....
-			for (int i =0;i < localAOIDoubles.length; i++)
+
+			// Okay, I know there are Arrays method to handle this, but they're
+			// not working.....
+			for (int i = 0; i < localAOIDoubles.length; i++)
 			{
 				aoiDoubles.add(localAOIDoubles[i]);
 			}

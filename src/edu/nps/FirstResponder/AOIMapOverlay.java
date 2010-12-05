@@ -17,7 +17,8 @@ import com.google.android.maps.MapActivity;
 import com.google.android.maps.MapView;
 import com.google.android.maps.Overlay;
 
-public class AOIMapOverlay extends Overlay {
+public class AOIMapOverlay extends Overlay
+{
 
 	private MapActivity parent;
 	private ShapeDrawable mDrawable;
@@ -27,7 +28,8 @@ public class AOIMapOverlay extends Overlay {
 	private int displayHeight;
 	private boolean isSelectAOI = false;
 
-	public AOIMapOverlay(MapActivity aParent) {// , GeoPoint geoPoint1,
+	public AOIMapOverlay(MapActivity aParent)
+	{// , GeoPoint geoPoint1,
 		// GeoPoint geoPoint2) {
 		super();
 		parent = aParent;
@@ -43,26 +45,29 @@ public class AOIMapOverlay extends Overlay {
 
 	@Override
 	public boolean draw(Canvas canvas, MapView mapView, boolean shadow,
-			long when) {
+			long when)
+	{
 		super.draw(canvas, mapView, shadow);
 		// mDrawable.draw(canvas);
 		Point point1 = new Point();
 		Point point2 = new Point();
 
-		if (((MapsActivity) parent).isAoiSelection()) {
+		if (((MapsActivity) parent).isAoiSelection())
+		{
 			Paint paint = new Paint();
-			ArrayList<AreaOfInterest> temp = ((MapsActivity) parent).getAOIList();
-			for(int i = 0; i < temp.size(); i++) {
-				
+			ArrayList<AreaOfInterest> temp = ((MapsActivity) parent)
+					.getAOIList();
+			for (int i = 0; i < temp.size(); i++)
+			{
+
 				paint.setColor(Color.GRAY);
 				paint.setAlpha(80); // transparency
 				AreaOfInterest aAoi = temp.get(i);
 				mapView.getProjection().toPixels(aAoi.getGeoPt1(), point1);
 				mapView.getProjection().toPixels(aAoi.getGeoPt2(), point2);
-				canvas.drawRect(point1.x, point1.y, point2.x, point2.y, paint);			
+				canvas.drawRect(point1.x, point1.y, point2.x, point2.y, paint);
 			}
-			
-			
+
 			displayWidth = mapView.getWidth();
 			displayHeight = mapView.getHeight();
 
@@ -105,60 +110,70 @@ public class AOIMapOverlay extends Overlay {
 	}
 
 	public void determinePoints(MapView mapView, int x, int y, Point pt1,
-			Point pt2) {
+			Point pt2)
+	{
 		displayWidth = mapView.getWidth();
 		displayHeight = mapView.getHeight();
 
 		if ((x >= 0 && x <= (displayWidth / 3))
-				&& (y >= 0 && y <= (displayHeight / 3))) {
+				&& (y >= 0 && y <= (displayHeight / 3)))
+		{
 			pt1.x = 0;
 			pt1.y = 0;
 			pt2.x = (displayWidth / 3);
 			pt2.y = (displayHeight / 3);
 		} else if ((x > (displayWidth / 3) && x <= (displayWidth * 2 / 3))
-				&& (y >= 0 && y <= (displayHeight / 3))) {
+				&& (y >= 0 && y <= (displayHeight / 3)))
+		{
 			pt1.x = (displayWidth / 3);
 			pt1.y = 0;
 			pt2.x = (displayWidth * 2 / 3);
 			pt2.y = (displayHeight / 3);
 		} else if ((x > (displayWidth * 2 / 3) && x <= (displayWidth))
-				&& (y >= 0 && y <= (displayHeight / 3))) {
+				&& (y >= 0 && y <= (displayHeight / 3)))
+		{
 			pt1.x = (displayWidth * 2 / 3);
 			pt1.y = 0;
 			pt2.x = (displayWidth);
 			pt2.y = (displayHeight / 3);
 		} else if ((x >= 0 && x <= (displayWidth / 3))
-				&& (y > (displayHeight / 3) && y <= (displayHeight * 2 / 3))) {
+				&& (y > (displayHeight / 3) && y <= (displayHeight * 2 / 3)))
+		{
 			pt1.x = 0;
 			pt1.y = (displayHeight / 3);
 			pt2.x = (displayWidth / 3);
 			pt2.y = (displayHeight * 2 / 3);
 		} else if ((x > (displayWidth / 3) && x <= (displayWidth * 2 / 3))
-				&& (y > (displayHeight / 3) && y <= (displayHeight * 2 / 3))) {
+				&& (y > (displayHeight / 3) && y <= (displayHeight * 2 / 3)))
+		{
 			pt1.x = (displayWidth / 3);
 			pt1.y = (displayHeight / 3);
 			pt2.x = (displayWidth * 2 / 3);
 			pt2.y = (displayHeight * 2 / 3);
 		} else if ((x > (displayWidth * 2 / 3) && x <= (displayWidth))
-				&& (y > (displayHeight / 3) && y <= (displayHeight * 2 / 3))) {
+				&& (y > (displayHeight / 3) && y <= (displayHeight * 2 / 3)))
+		{
 			pt1.x = (displayWidth * 2 / 3);
 			pt1.y = (displayHeight / 3);
 			pt2.x = (displayWidth);
 			pt2.y = (displayHeight * 2 / 3);
 		} else if ((x >= 0 && x <= (displayWidth / 3))
-				&& (y > (displayHeight * 2 / 3) && y <= (displayHeight))) {
+				&& (y > (displayHeight * 2 / 3) && y <= (displayHeight)))
+		{
 			pt1.x = 0;
 			pt1.y = (displayHeight * 2 / 3);
 			pt2.x = (displayWidth / 3);
 			pt2.y = (displayHeight);
 		} else if ((x > (displayWidth / 3) && x <= (displayWidth * 2 / 3))
-				&& (y > (displayHeight * 2 / 3) && y <= (displayHeight))) {
+				&& (y > (displayHeight * 2 / 3) && y <= (displayHeight)))
+		{
 			pt1.x = (displayWidth / 3);
 			pt1.y = (displayHeight * 2 / 3);
 			pt2.x = (displayWidth * 2 / 3);
 			pt2.y = (displayHeight);
 		} else if ((x > (displayWidth * 2 / 3) && x <= (displayWidth))
-				&& (y > (displayHeight * 2 / 3) && y <= (displayHeight))) {
+				&& (y > (displayHeight * 2 / 3) && y <= (displayHeight)))
+		{
 			pt1.x = (displayWidth * 2 / 3);
 			pt1.y = (displayHeight * 2 / 3);
 			pt2.x = (displayWidth);
@@ -167,12 +182,14 @@ public class AOIMapOverlay extends Overlay {
 	}
 
 	@Override
-	public boolean onTouchEvent(MotionEvent event, MapView mapView) {
+	public boolean onTouchEvent(MotionEvent event, MapView mapView)
+	{
 
 		int posX = 0;
 		int posY = 0;
 
-		if (((MapsActivity) parent).isAoiSelection()) {
+		if (((MapsActivity) parent).isAoiSelection())
+		{
 			posX = (int) event.getX();
 			posY = (int) event.getY();
 			Point pt1 = new Point();
@@ -180,25 +197,27 @@ public class AOIMapOverlay extends Overlay {
 			determinePoints(mapView, posX, posY, pt1, pt2);
 			GeoPoint geoPt1 = mapView.getProjection().fromPixels(pt1.x, pt1.y);
 			GeoPoint geoPt2 = mapView.getProjection().fromPixels(pt2.x, pt2.y);
-			
+
 			AreaOfInterest aoi = new AreaOfInterest(geoPt1, geoPt2);
 			((MapsActivity) parent).addToAOIList(aoi);
-			
-			//Toast.makeText(parent.getBaseContext(), "Area Of Interest Added", Toast.LENGTH_SHORT).show();
+
+			// Toast.makeText(parent.getBaseContext(), "Area Of Interest Added",
+			// Toast.LENGTH_SHORT).show();
 
 			// Uncomment to debug
-//			GeoPoint clickedPt = mapView.getProjection().fromPixels(posX, posY);
-//			Toast.makeText(
-//					parent.getBaseContext(),
-//					"Clicked : " + clickedPt.getLatitudeE6() / 1E6 + ","
-//							+ clickedPt.getLongitudeE6() / 1E6 + "\nPoint 1 : "
-//							+ geoPt1.getLatitudeE6() / 1E6 + ","
-//							+ geoPt1.getLongitudeE6() / 1E6 + "\nPoint 2 : "
-//							+ geoPt2.getLatitudeE6() / 1E6 + ", "
-//							+ geoPt2.getLongitudeE6() / 1E6, Toast.LENGTH_LONG)
-//					.show();
+			// GeoPoint clickedPt = mapView.getProjection().fromPixels(posX,
+			// posY);
+			// Toast.makeText(
+			// parent.getBaseContext(),
+			// "Clicked : " + clickedPt.getLatitudeE6() / 1E6 + ","
+			// + clickedPt.getLongitudeE6() / 1E6 + "\nPoint 1 : "
+			// + geoPt1.getLatitudeE6() / 1E6 + ","
+			// + geoPt1.getLongitudeE6() / 1E6 + "\nPoint 2 : "
+			// + geoPt2.getLatitudeE6() / 1E6 + ", "
+			// + geoPt2.getLongitudeE6() / 1E6, Toast.LENGTH_LONG)
+			// .show();
 
-			//((MapsActivity) parent).disableAoiSelection();
+			// ((MapsActivity) parent).disableAoiSelection();
 		}
 
 		// int iPosX = 0;
@@ -230,7 +249,8 @@ public class AOIMapOverlay extends Overlay {
 		return false;
 	}
 
-	public void setParent(MapActivity aParent) {
+	public void setParent(MapActivity aParent)
+	{
 		parent = aParent;
 	}
 
