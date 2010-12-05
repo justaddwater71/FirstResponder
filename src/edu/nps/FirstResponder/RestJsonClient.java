@@ -52,12 +52,12 @@ public class RestJsonClient {
 		return (Base64.encodeBytes((user + ":" + password).getBytes()));
 	}
 	
-	public static JSONObject connect(String url) {
+	public static JSONArray connect(String url) throws JSONException {
 		return connect(url, "", "");
 	}
 
 	public static JSONArray getFeeds(String url, String username,
-			String password) {
+			String password) throws JSONException {
 
 		setUser(username);
 		setPassword(password);
@@ -98,16 +98,13 @@ public class RestJsonClient {
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
 
 		return json;
 	}
 	
-	public static JSONObject connect(String url, String username,
-			String password) {
+	public static JSONArray connect(String url, String username,
+			String password) throws JSONException {
 
 		setUser(username);
 		setPassword(password);
@@ -121,7 +118,7 @@ public class RestJsonClient {
 		// Execute the request
 		HttpResponse response;
 
-		JSONObject json = new JSONObject();
+		JSONArray json = new JSONArray();
 
 		try {
 
@@ -136,7 +133,7 @@ public class RestJsonClient {
 				String result = convertStreamToString(instream);
 				Log.i(DEB_TAG, "Result : " + result);
 
-				json = new JSONObject(result);
+				json = new JSONArray(result);
 
 				instream.close();
 				
@@ -146,9 +143,6 @@ public class RestJsonClient {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

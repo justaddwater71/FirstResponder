@@ -16,7 +16,10 @@ import android.location.Location;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.Toast;
+import android.widget.ToggleButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 
 
 public class MapsActivity extends MapActivity {
@@ -26,7 +29,7 @@ public class MapsActivity extends MapActivity {
 	boolean isSelectAOI = false;
 	private ArrayList<AreaOfInterest> aoiList = new ArrayList<AreaOfInterest>(); 
 	private boolean debugMode = false;
-	private long delay = 60000; // initial delay before execution
+	private long delay = 100; // initial delay before execution
 	private long period = 60000; // time interval between tasks
 	GeoPoint curLocation = null;
 
@@ -65,26 +68,71 @@ public class MapsActivity extends MapActivity {
 		Button doneButton = (Button)findViewById(R.id.doneButton);
 		doneButton.setOnClickListener(onDoneButtonClicked);
 
-		final Button button = (Button) findViewById(R.id.aoiButton);
-		button.setOnClickListener(new View.OnClickListener() {
-			public void onClick(View v) {
+		ToggleButton button = (ToggleButton) findViewById(R.id.aoiButton);
+		
+		button.setChecked(false);
+		
+		button.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+/*			public void onClick(View v) {
 				// Perform action on click
-				enableAoiSelection();
-				String aoiListString = "Area Of Interest List\n";
-				if(aoiList.isEmpty()) {
-					aoiListString += "No area selected";
+				if (button.isChecked())
+				{
+					disableAoiSelection();
 				}
-				for(int i = 0; i < aoiList.size(); i++ ) {
-					aoiListString += "Area " + (i+1) + ": \n";
-					AreaOfInterest aAoi = aoiList.get(i);
-					aoiListString += aAoi.getPt1Latitude() + "," + aAoi.getPt1Longitude();
-					aoiListString += " to " + aAoi.getPt2Latitude() + "," + aAoi.getPt2Longitude() + "\n";
+					else
+					{
+					enableAoiSelection();
+					String aoiListString = "Area Of Interest List\n";
+					if(aoiList.isEmpty()) {
+						aoiListString += "No area selected";
+					}
+					for(int i = 0; i < aoiList.size(); i++ ) {
+						aoiListString += "Area " + (i+1) + ": \n";
+						AreaOfInterest aAoi = aoiList.get(i);
+						aoiListString += aAoi.getPt1Latitude() + "," + aAoi.getPt1Longitude();
+						aoiListString += " to " + aAoi.getPt2Latitude() + "," + aAoi.getPt2Longitude() + "\n";
+					}
+					Toast.makeText(
+							getBaseContext(),
+							"Click on a grid to select an Area of Interest\n" + aoiListString,
+							Toast.LENGTH_SHORT).show();
+					mc.stopPanning();
 				}
-				Toast.makeText(
-						getBaseContext(),
-						"Click on a grid to select an Area of Interest\n" + aoiListString,
-						Toast.LENGTH_SHORT).show();
-				mc.stopPanning();
+			}*/
+
+			@Override
+			public void onCheckedChanged(CompoundButton thisButton,
+					boolean isChecked)
+			{
+				if (isChecked)
+				{
+					enableAoiSelection();
+					String aoiListString = "Area Of Interest List\n";
+					if(aoiList.isEmpty()) 
+					{
+						aoiListString += "No area selected";
+					}
+					
+					for(int i = 0; i < aoiList.size(); i++ )
+					{
+						aoiListString += "Area " + (i+1) + ": \n";
+						AreaOfInterest aAoi = aoiList.get(i);
+						aoiListString += aAoi.getPt1Latitude() + "," + aAoi.getPt1Longitude();
+						aoiListString += " to " + aAoi.getPt2Latitude() + "," + aAoi.getPt2Longitude() + "\n";
+					}
+					
+					Toast.makeText(
+							getBaseContext(),
+							"Click on a grid to select an Area of Interest\n" + aoiListString,
+							Toast.LENGTH_SHORT).show();
+					mc.stopPanning();
+					
+				}
+				else
+				{
+					disableAoiSelection();
+				}
+				
 			}
 		});
 

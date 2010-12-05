@@ -11,6 +11,7 @@ import java.util.*;
 import android.util.Log;
 import java.lang.reflect.Type;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import android.app.ProgressDialog;
@@ -22,64 +23,12 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-
-public class LoginActivity extends Activity implements OnClickListener {
+public class LoginActivity extends Activity implements OnClickListener
+{
 	/** Called when the activity is first created. */
-	// @Override
-	// public void onCreate(Bundle savedInstanceState) {
-	// super.onCreate(savedInstanceState);
-	// TextView tv = new TextView(this);
-	//
-	// // Instantiate the Web Service Class with he URL of the web service not
-	// that you must pass
-	//
-	// WebService webService = new
-	// WebService("http://www.sumasoftware.com/alerts/GetAlerts.php");
-	//
-	// //Pass the parameters if needed , if not then pass dummy one as follows
-	// Map<String, String> params = new HashMap<String, String>();
-	// params.put("var", "");
-	//
-	// //Get JSON response from server the "" are where the method name would
-	// normally go if needed example
-	// // webService.webGet("getMoreAllerts", params);
-	// String response = webService.webGet("", params);
-	// Log.d("Test: ", "test");
-	// //webService.webGet("", params);
-	// //try
-	// //{
-	// //Parse Response into our object
-	// Type collectionType = new TypeToken<List<Alerts>>(){}.getType();
-	// List<Alerts> alert = new Gson().fromJson(response, collectionType);
-	// //Alerts alert = new Gson().fromJson(response, Alerts.class);
-	//
-	// //}
-	// //catch(Exception e)
-	// //{
-	// // Log.d("Error: ", e.getMessage());
-	// //}
-	//
-	//
-	// //tv.setText("JSON Test");
-	// String s = new String();
-	// for(Alerts item: alert)
-	// {
-	// s = s + "\n" + item.toString();
-	// //tv.setText(item.toString());
-	// }
-	// tv.setText(s.toString());
-	// setContentView(tv);
-	// //setContentView(R.layout.main);
-	// }
-	//
-	// public void onClick(View arg0) {
-	// // TODO Auto-generated method stub
-	//
-	// }
 	private static final int SERVER_PORT = 80;
 
 	private static final String DEB_TAG = "Json_Android";
-	
 
 	public static final String PREFS_NAME = "HelloAndroidPREFS";
 
@@ -90,7 +39,8 @@ public class LoginActivity extends Activity implements OnClickListener {
 	/** Called when the activity is first created. */
 
 	@Override
-	public void onCreate(Bundle icicle) {
+	public void onCreate(Bundle icicle)
+	{
 
 		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 
@@ -102,7 +52,9 @@ public class LoginActivity extends Activity implements OnClickListener {
 
 		// load up the layout
 
-		setContentView(R.layout.login_main); //FIXME this should not reference the main main -- I'm doofing this. --JHG
+		setContentView(R.layout.login_main); // FIXME this should not reference
+												// the main main -- I'm doofing
+												// this. --JHG
 
 		// get the button resource in the xml file and assign it to a local
 		// variable of type Button
@@ -119,12 +71,14 @@ public class LoginActivity extends Activity implements OnClickListener {
 
 	}
 
-	public void setUserNameText(String $username) {
+	public void setUserNameText(String $username)
+	{
 		EditText usernameEditText = (EditText) findViewById(R.id.txt_username);
 		usernameEditText.setText($username);
 	}
 
-	public void setPasswordText(String $username) {
+	public void setPasswordText(String $username)
+	{
 		EditText passwordEditText = (EditText) findViewById(R.id.txt_password);
 		passwordEditText.setText($username);
 
@@ -140,20 +94,21 @@ public class LoginActivity extends Activity implements OnClickListener {
 	private void hideKeyboard(View view)
 	{
 
-		 //Below hide-keyboard code copied from
-		 //http://stackoverflow.com/questions/1109022/how-to-close-hide-the-android-soft-keyboard
+		// Below hide-keyboard code copied from
+		// http://stackoverflow.com/questions/1109022/how-to-close-hide-the-android-soft-keyboard
 
 		InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.hideSoftInputFromWindow(view.getApplicationWindowToken(), 0);
-        //End copy from stackoverflow
+		imm.hideSoftInputFromWindow(view.getApplicationWindowToken(), 0);
+		// End copy from stackoverflow
 	}
-	
-	public void onClick(View v) {
+
+	public void onClick(View v)
+	{
 
 		// Handle based on which view was clicked.
 
 		Log.i(DEB_TAG + " onClick ", "onClick");
-		
+
 		hideKeyboard(v);
 
 		// this gets the resources in the xml file
@@ -175,17 +130,19 @@ public class LoginActivity extends Activity implements OnClickListener {
 		String sPassword = passwordEditText.getText().toString();
 
 		// call the backend using Get parameters (discouraged but works good for
-		// this exampl ;) )
+		// this example ;) )
 
-		String address = "http://" + FirstResponderParameters.SERVER_HOST;// + "/feeds/1.json?user_credentials=WNbyY6iHFN1sfalesBg"; + ":" + SERVER_PORT
-				//+ "/jbackend.php?action=login&Login=" + sUserName
-				//+ "&Password=" + sPassword + "";
+		String address = "http://" + FirstResponderParameters.SERVER_HOST
+				+ "/feeds.json";
 
-		if (usernameEditText == null || passwordEditText == null) {
+		if (usernameEditText == null || passwordEditText == null)
+		{
 			// show some warning
-		} else {
+		} else
+		{
 			// display the username and the password in string format
-			try {
+			try
+			{
 
 				showBusyCursor(true);
 
@@ -193,44 +150,51 @@ public class LoginActivity extends Activity implements OnClickListener {
 
 				"Please wait...", "Login in process", true);
 
-				Log.i(DEB_TAG, "Username: " + sUserName + "nPassword: "
+				Log.i(DEB_TAG, "Username: " + sUserName + " Password: "
 						+ sPassword);
 
 				Log.i(DEB_TAG, "Requesting to " + address);
 
-				JSONObject json = RestJsonClient.connect(address, sUserName, sPassword);
-				
-				//added by JHG so other Activities can access username and password
-				settings.edit().putString("Login", sUserName);
-				
-				settings.edit().putString("Password", sPassword);
-				
-/*				Timer t = new Timer();
-				
-				LocationTimerTask locationTimerTask = new LocationTimerTask();
-				
-				t.schedule(locationTimerTask, 1000, 60000);*/
+				JSONArray json = RestJsonClient.connect(address, sUserName,
+						sPassword);
 
-			} catch (Exception e) {// (JSONException e) {
+				// added by JHG so other Activities can access username and
+				// password
+				settings.edit().putString("Login", sUserName);
+
+				settings.edit().putString("Password", sPassword);
+
+				/*
+				 * Timer t = new Timer();
+				 * 
+				 * LocationTimerTask locationTimerTask = new
+				 * LocationTimerTask();
+				 * 
+				 * t.schedule(locationTimerTask, 1000, 60000);
+				 */
+
+				// SharedPreferences.Editor editor = settings.edit();
+				// editor.putString("Login", (String) user.get("Login"));
+				// editor.putString("Password", (String) user.get("Password"));
+				// editor.commit();
+				showBusyCursor(false);
+
+				next();
+
+			} catch (JSONException e)
+			{// (JSONException e) {
 
 				// TODO Auto-generated catch block
 
-				e.printStackTrace();
+				Toast toast = Toast.makeText(getBaseContext(),
+						"Login failed.  Please try again.", Toast.LENGTH_LONG);
+				toast.show();
 
 				showBusyCursor(false);
 
 			}// end try
 
 			progress.dismiss();
-
-			
-//			SharedPreferences.Editor editor = settings.edit();
-//			editor.putString("Login", (String) user.get("Login"));
-//			editor.putString("Password", (String) user.get("Password"));
-//			editor.commit();
-			showBusyCursor(false);
-
-			next();
 
 		}// end else
 
@@ -242,17 +206,23 @@ public class LoginActivity extends Activity implements OnClickListener {
 
 	*/
 
-	private void showBusyCursor(Boolean $show) {
+	private void showBusyCursor(Boolean $show)
+	{
 		setProgressBarIndeterminateVisibility($show);
 	}
 
-	private void next() {
+	private void next()
+	{
 		// you can call another activity by uncommenting the above lines
-		 Intent myIntent = new Intent( this.getBaseContext() ,
-		 MapsActivity.class);
-		 startActivityForResult(myIntent, 0);
+		Intent myIntent = new Intent(this.getBaseContext(), MapsActivity.class);
+		startActivityForResult(myIntent, 0);
+		Intent startChatIntent = new Intent(
+				FirstResponder.INTENT_ACTION_LOGIN_SUCCESSFUL);
+		sendBroadcast(startChatIntent);
+
 		Log.i(DEB_TAG, "Login Successful!");
-		//Toast.makeText(getBaseContext(), "Login successful!", Toast.LENGTH_SHORT);
+		// Toast.makeText(getBaseContext(), "Login successful!",
+		// Toast.LENGTH_SHORT);
 	}
 
 }

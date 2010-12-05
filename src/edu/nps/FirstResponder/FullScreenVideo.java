@@ -1,7 +1,13 @@
 package edu.nps.FirstResponder;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.WindowManager;
@@ -13,6 +19,9 @@ public class FullScreenVideo extends Activity
 {
 	String	videoURIString;
 	Uri 		video;
+	ChatReceiver chatReceiver;
+	IntentFilter			chatIntentFilter;
+	
 	 /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -31,6 +40,10 @@ public class FullScreenVideo extends Activity
         {
         	video = null;
         }
+        
+        chatReceiver = new ChatReceiver();
+		chatIntentFilter = new IntentFilter(FirstResponder.INTENT_ACTION_CHAT_MESSAGE);
+		registerReceiver(chatReceiver, chatIntentFilter);
         
         mainView();
     }
@@ -58,6 +71,47 @@ public class FullScreenVideo extends Activity
 	    	fullScreenVideo.setVideoURI(video);
 	    	
 	    	fullScreenVideo.start();
+	    	
+	    	fullScreenVideo.setBackgroundColor(R.color.edit_text_background);
     	}
     }
+    
+	public class ChatReceiver extends BroadcastReceiver
+	{
+
+		public void onReceive(Context context, Intent intent)
+		{
+			Bundle bundle = intent.getExtras();
+
+			// String room = bundle.getString(INTENT_KEY_CHAT_ROOM);
+			String message = bundle.getString(FirstResponder.INTENT_KEY_CHAT_MESSAGE);
+
+			processChatMessage(message);
+
+		}
+
+	}
+	
+	public void processChatMessage(String chatLine)
+	{
+		JSONObject json;
+		try
+		{
+			json = new JSONObject(chatLine);
+
+			String time = json.getString("time");
+
+			JSONObject jsonInner = new JSONObject(json.getString("message"));
+
+			String user = jsonInner.getString("user");
+			String room = jsonInner.getString("room");
+			String message = jsonInner.getString("message");
+
+			Toast.makeText(this.getBaseContext(), "Room: " + room + "\n" + user + " says: " + message, Toast.LENGTH_SHORT);
+		}
+		catch (JSONException e)
+		{
+			//Do nothing, it's just not that critical.....
+		}
+	}
 }

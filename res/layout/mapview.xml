@@ -33,13 +33,14 @@
 		android:layout_width="fill_parent"
 		android:layout_height="fill_parent"
 	>
-		<Button
+		<ToggleButton
 			android:id="@+id/aoiButton"
 			android:layout_width="fill_parent"
 			android:layout_height="wrap_content"
 			android:layout_weight="1"
 			android:layout_gravity="center_vertical"
-			android:text="Show Grid" />
+			android:textOn="Hide Grid"
+			android:textOff="Show Grid" />
 			
 		<Button
 			android:id="@+id/doneButton"

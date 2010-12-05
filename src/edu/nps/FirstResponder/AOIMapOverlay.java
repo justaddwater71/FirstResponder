@@ -184,7 +184,7 @@ public class AOIMapOverlay extends Overlay {
 			AreaOfInterest aoi = new AreaOfInterest(geoPt1, geoPt2);
 			((MapsActivity) parent).addToAOIList(aoi);
 			
-			Toast.makeText(parent.getBaseContext(), "Area Of Interest Added", Toast.LENGTH_SHORT).show();
+			//Toast.makeText(parent.getBaseContext(), "Area Of Interest Added", Toast.LENGTH_SHORT).show();
 
 			// Uncomment to debug
 //			GeoPoint clickedPt = mapView.getProjection().fromPixels(posX, posY);
@@ -198,7 +198,7 @@ public class AOIMapOverlay extends Overlay {
 //							+ geoPt2.getLongitudeE6() / 1E6, Toast.LENGTH_LONG)
 //					.show();
 
-			((MapsActivity) parent).disableAoiSelection();
+			//((MapsActivity) parent).disableAoiSelection();
 		}
 
 		// int iPosX = 0;
