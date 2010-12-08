@@ -52,9 +52,7 @@ public class LoginActivity extends Activity implements OnClickListener
 
 		// load up the layout
 
-		setContentView(R.layout.login_main); // FIXME this should not reference
-		// the main main -- I'm doofing
-		// this. --JHG
+		setContentView(R.layout.login_main); 
 
 		// get the button resource in the xml file and assign it to a local
 		// variable of type Button
@@ -146,9 +144,8 @@ public class LoginActivity extends Activity implements OnClickListener
 
 				showBusyCursor(true);
 
-				progress = ProgressDialog.show(this,
-
-				"Please wait...", "Login in process", true);
+				progress = ProgressDialog.show(this, "Please wait....", "Login in process", true);
+				
 
 				Log.i(DEB_TAG, "Username: " + sUserName + " Password: "
 						+ sPassword);

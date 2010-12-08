@@ -69,13 +69,11 @@ public class FirstResponder extends TabActivity
 
 	// Full Screen Intent Extra Keys
 	public static final String INTENT_KEY_FULLSCREEN = "fullscreen";
-
+	public static final String INTENT_KEY_CHAT_ARRAY = "chat_array";
+	
 	// Notification Intent keys
 	public static final int INTENT_KEY_ENTERING_NOTIFICATION = 2;
 	public static final int INTENT_KEY_LEAVING_NOTIFICATION = 3;
-
-	// Stream filename
-	// public static final String STREAM_FILE = "stream_file.txt";
 
 	// StreamChooser Intent ACTION
 	public static final String INTENT_ACTION_GEOUPDATE = "geo_update_action";
@@ -94,6 +92,9 @@ public class FirstResponder extends TabActivity
 	public static final String INTENT_KEY_CHAT_MESSAGE = "message_key";
 	public static final String INTENT_KEY_CHAT_ROOM = "room_key";
 	public static final String INTENT_ACTION_LOGIN_SUCCESSFUL = "login_sucessful";
+	
+	//Chat constants
+	public static final String CHAT_SERVER_URL = "192.168.1.103";
 
 	private NotificationManager notifier;
 
@@ -372,12 +373,11 @@ public class FirstResponder extends TabActivity
 		fullScreenButton.setOnClickListener(onFullScreenButtonClicked);
 
 		// Create see chat pop ups toggle button with cool green light
-		/*
-		 * seeChatToggleButton = (ToggleButton)findViewById(R.id.see_chat);
-		 * seeChatToggleButton.setChecked(true);
-		 * seeChatToggleButton.setOnClickListener(onSeeChatToggleButtonClicked);
-		 * seeChatToggleButton.setOnClickListener(onSeeChatToggleButtonClicked);
-		 */
+
+		seeChatToggleButton = (ToggleButton) findViewById(R.id.see_chat);
+		seeChatToggleButton.setChecked(true);
+		seeChatToggleButton.setOnClickListener(onSeeChatToggleButtonClicked);
+
 	}
 
 	private void createStreamChooserView()
@@ -661,9 +661,24 @@ public class FirstResponder extends TabActivity
 				R.drawable.ic_notification_overlay, ticker, System
 						.currentTimeMillis());
 
+		Intent startSeinfeldIntent = new Intent(FirstResponder.this,
+				Seinfeld.class);
+
+/*		Bundle startFullScreenBundle = new Bundle();
+
+		startFullScreenBundle.putString(INTENT_KEY_FULLSCREEN, stream);*/
+		// startFullScreenBundle.putString( INTENT_KEY_FULLSCREEN,
+		// "/sdcard/test2.3gp" );
+
+		PendingIntent contentIntent = PendingIntent.getActivity(this, 0,
+				startSeinfeldIntent, 0);
+		
+		
 		notification.defaults = Notification.DEFAULT_ALL;
 		notification.flags = Notification.FLAG_AUTO_CANCEL;
-
+		notification.setLatestEventInfo(getApplicationContext(), title, text,
+				contentIntent);
+		
 		notifier.notify(intentID, notification);
 	}
 
@@ -757,6 +772,8 @@ public class FirstResponder extends TabActivity
 
 		startFullScreenBundle
 				.putString(INTENT_KEY_FULLSCREEN, video.toString());
+		startFullScreenBundle
+				.putStringArrayList(INTENT_KEY_CHAT_ARRAY, getButtonLabelList());
 		// startFullScreenBundle.putString( INTENT_KEY_FULLSCREEN,
 		// "/sdcard/test2.3gp" );
 
@@ -914,17 +931,24 @@ public class FirstResponder extends TabActivity
 
 	};
 
-	/*
-	 * private Button.OnClickListener onSeeChatToggleButtonClicked = new
-	 * Button.OnClickListener() {
-	 * 
-	 * public void onClick(View v) { if (seeChatToggleButton.isChecked()) {
-	 * showChatPopUps = true; showOptionChatToggleButton.setChecked(true); }
-	 * else { showChatPopUps = false;
-	 * showOptionChatToggleButton.setChecked(false); } }
-	 * 
-	 * };
-	 */
+	private Button.OnClickListener onSeeChatToggleButtonClicked = new Button.OnClickListener()
+	{
+
+		public void onClick(View v)
+		{
+			if (seeChatToggleButton.isChecked())
+			{
+				showChatPopUps = true;
+				createEnterNotification("Entering AOI...", "AOI Alert", "Stream entering AOI", enterNotificationID, "Stream");
+				//showOptionChatToggleButton.setChecked(true);
+			} else
+			{
+				showChatPopUps = false;
+				createLeaveNotification("Leaving AOI", "AOI Alert", "Stream leaving AOI", leaveNotificationID);
+				//showOptionChatToggleButton.setChecked(false);
+			}
+		}
+	};
 
 	private Button.OnClickListener onFullScreenButtonClicked = new Button.OnClickListener()
 	{
@@ -1046,12 +1070,9 @@ public class FirstResponder extends TabActivity
 		}
 
 	};
-
-	private void deleteChatGroup(final View v)
+	
+	public ArrayList<String> getButtonLabelList()
 	{
-		// Pop up an AlertDialog with a List of chat tabs
-		AlertDialog.Builder alert = new AlertDialog.Builder(v.getContext());
-
 		ArrayList<String> buttonLabelList = new ArrayList<String>();
 
 		Iterator<Button> iterator = buttonArrayList.iterator();
@@ -1060,9 +1081,19 @@ public class FirstResponder extends TabActivity
 		{
 			buttonLabelList.add(iterator.next().getText().toString());
 		}
+		
+		return buttonLabelList;
+	}
+
+	private void deleteChatGroup(final View v)
+	{
+		// Pop up an AlertDialog with a List of chat tabs
+		AlertDialog.Builder alert = new AlertDialog.Builder(v.getContext());
+
+		ArrayList<String> buttonLabelList = getButtonLabelList();
 
 		ArrayAdapter<String> buttonArrayAdapter = new ArrayAdapter<String>(v
-				.getContext(), R.layout.chat_group_delete_row, buttonLabelList);
+				.getContext(), R.layout.chat_group_display_row, buttonLabelList);
 
 		alert.setTitle("Delete Chat Group");
 
@@ -1394,7 +1425,7 @@ public class FirstResponder extends TabActivity
 		@Override
 		public void onReceive(Context context, Intent intent)
 		{
-			jsChatClientService.connect("jschat.org", 6789, RestJsonClient
+			jsChatClientService.connect(CHAT_SERVER_URL, 6789, RestJsonClient
 					.getUser());
 		}
 

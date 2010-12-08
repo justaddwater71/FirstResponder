@@ -4,4 +4,7 @@
     <string name="app_name">FirstResponder</string>
 <string name="stream_chooser_name">&quot;Video Stream Chooser&quot;</string>
 <string name="full_screen_video_name">&quot;Full Screen Video&quot;</string>
+<string name="menu_chat_pop_ups">&quot;Chat Pop Ups&quot;</string>
+<string name="menu_send_chat">&quot;Send Chat&quot;</string>
+<string name="menu_exit">&quot;Exit&quot;</string>
 </resources>
