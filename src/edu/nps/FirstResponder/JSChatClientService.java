@@ -28,6 +28,7 @@ public class JSChatClientService extends Service
 	@Override
 	public void onCreate()
 	{
+		Log.i("JSChatClientService", "JSChatClientService created.");
 		super.onCreate();
 		binder = new LocalBinder();
 	}
@@ -37,6 +38,7 @@ public class JSChatClientService extends Service
 	{
 		// Close to Mark Murphy's
 		// "The Busy Coder's Guide to Android Programming"
+		Log.i("JSChatClientService", "JSChatClientService bound.");
 		return binder;
 	}
 
@@ -51,6 +53,7 @@ public class JSChatClientService extends Service
 
 	public void connect(String urlString, int port, String username)
 	{
+		Log.i("JSChatClientService", "JSChatClientService connecting to." + urlString + " as " + username);
 		try
 		{
 			Log.d(FirstResponderParameters.DEB_TAG, "Connecting to "

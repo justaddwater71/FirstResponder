@@ -42,6 +42,7 @@ public class MapsActivity extends MapActivity
 
 		mapView = (MapView) findViewById(R.id.mapView);
 		mapView.setBuiltInZoomControls(true);
+
 		mc = mapView.getController();
 		LocationTimerTask locTimerTask = new LocationTimerTask();
 		locTimerTask.setParent(this);
@@ -69,27 +70,36 @@ public class MapsActivity extends MapActivity
 		Button doneButton = (Button) findViewById(R.id.doneButton);
 		doneButton.setOnClickListener(onDoneButtonClicked);
 
+		ToggleButton satButton = (ToggleButton)findViewById(R.id.satelliteButton);
+		
+		satButton.setChecked(true);
+		
+		satButton.setOnCheckedChangeListener(new OnCheckedChangeListener()
+		{
+
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView,
+					boolean isChecked)
+			{
+				if (isChecked)
+				{
+					mapView.setSatellite(true);
+				}
+				else
+				{
+					mapView.setSatellite(false);
+				}
+				
+			}
+			
+		});
+		
 		ToggleButton button = (ToggleButton) findViewById(R.id.aoiButton);
 
 		button.setChecked(false);
 
 		button.setOnCheckedChangeListener(new OnCheckedChangeListener()
 		{
-			/*
-			 * public void onClick(View v) { // Perform action on click if
-			 * (button.isChecked()) { disableAoiSelection(); } else {
-			 * enableAoiSelection(); String aoiListString =
-			 * "Area Of Interest List\n"; if(aoiList.isEmpty()) { aoiListString
-			 * += "No area selected"; } for(int i = 0; i < aoiList.size(); i++ )
-			 * { aoiListString += "Area " + (i+1) + ": \n"; AreaOfInterest aAoi
-			 * = aoiList.get(i); aoiListString += aAoi.getPt1Latitude() + "," +
-			 * aAoi.getPt1Longitude(); aoiListString += " to " +
-			 * aAoi.getPt2Latitude() + "," + aAoi.getPt2Longitude() + "\n"; }
-			 * Toast.makeText( getBaseContext(),
-			 * "Click on a grid to select an Area of Interest\n" +
-			 * aoiListString, Toast.LENGTH_SHORT).show(); mc.stopPanning(); } }
-			 */
-
 			@Override
 			public void onCheckedChanged(CompoundButton thisButton,
 					boolean isChecked)

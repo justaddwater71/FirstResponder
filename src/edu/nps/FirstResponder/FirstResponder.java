@@ -23,12 +23,17 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.content.DialogInterface.OnClickListener;
+import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.preference.PreferenceManager;
 import android.text.InputType;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
@@ -70,7 +75,7 @@ public class FirstResponder extends TabActivity
 	// Full Screen Intent Extra Keys
 	public static final String INTENT_KEY_FULLSCREEN = "fullscreen";
 	public static final String INTENT_KEY_CHAT_ARRAY = "chat_array";
-	
+
 	// Notification Intent keys
 	public static final int INTENT_KEY_ENTERING_NOTIFICATION = 2;
 	public static final int INTENT_KEY_LEAVING_NOTIFICATION = 3;
@@ -92,10 +97,16 @@ public class FirstResponder extends TabActivity
 	public static final String INTENT_KEY_CHAT_MESSAGE = "message_key";
 	public static final String INTENT_KEY_CHAT_ROOM = "room_key";
 	public static final String INTENT_ACTION_LOGIN_SUCCESSFUL = "login_sucessful";
-	
-	//Chat constants
-	public static final String CHAT_SERVER_URL = "192.168.1.103";
 
+	// Chat constants
+	public static final String CHAT_SERVER_URL = "192.168.1.104";
+
+	// Menu Constants
+	public static final int MENU_SETTINGS = 0;
+	public static final int MENU_EXIT = 1;
+	public static final int MENU_TEST_NOTIFIER = 2;
+
+	// Data Members
 	private NotificationManager notifier;
 
 	TabHost myTabHost;
@@ -134,7 +145,7 @@ public class FirstResponder extends TabActivity
 	Button chooseAreaOfInterest;
 	Button chooseStreamButton;
 	Button fullScreenButton;
-	ToggleButton seeChatToggleButton;
+	// ToggleButton seeChatToggleButton;
 	boolean showChatPopUps = false;
 	ArrayList<Double> aoiDoubles = new ArrayList<Double>();
 
@@ -165,7 +176,7 @@ public class FirstResponder extends TabActivity
 	ArrayList<ArrayAdapter<String>> chatPostsAdapterList = new ArrayList<ArrayAdapter<String>>();
 	ArrayAdapter<String> chatPostsAdapter;
 	ArrayList<String> chatGroupIDList = new ArrayList<String>();
-	JSChatClientService jsChatClientService;;
+	JSChatClientService jsChatClientService;
 
 	// BroadcastReceiver for streams variables
 	StreamReceiver streamReceiver;
@@ -184,12 +195,21 @@ public class FirstResponder extends TabActivity
 	LoginReceiver loginReceiver;
 	IntentFilter loginIntentFilter;
 
+	// Preferences
+	SharedPreferences prefs;
+
 	// Constructors
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
+
+		prefs = PreferenceManager.getDefaultSharedPreferences(this);
+
+		bindService(new Intent(this, JSChatClientService.class), onService,
+				BIND_AUTO_CREATE);
+		
 		mainView();
 
 		notifier = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
@@ -213,9 +233,54 @@ public class FirstResponder extends TabActivity
 		loginIntentFilter = new IntentFilter(INTENT_ACTION_LOGIN_SUCCESSFUL);
 		registerReceiver(loginReceiver, loginIntentFilter);
 
-		bindService(new Intent(this, JSChatClientService.class), onService,
-				BIND_AUTO_CREATE);
+		
 
+		prefs.registerOnSharedPreferenceChangeListener(prefListener);
+	}
+
+	private SharedPreferences.OnSharedPreferenceChangeListener prefListener = new SharedPreferences.OnSharedPreferenceChangeListener()
+	{
+		public void onSharedPreferenceChanged(SharedPreferences sharedPrefs, String key)
+		{
+			Resources res = getResources();
+			if (key.equals(res.getString(R.string.shaft_server_key)))
+			{
+				//FIXME change where we get the feeds and update locations
+			}
+			else if (key.equals(res.getString(R.string.chat_server_key)))
+			{
+				loginToChatServer();
+			}
+		}
+	};
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu)
+	{
+		boolean result = super.onCreateOptionsMenu(menu);
+		menu.add(0, MENU_SETTINGS, 0, R.string.menu_settings);
+		menu.add(0, MENU_TEST_NOTIFIER, 0, R.string.menu_test_notifier);
+		menu.add(0, MENU_EXIT, 0, R.string.menu_exit);
+		return result;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item)
+	{
+		switch (item.getItemId())
+		{
+			case MENU_SETTINGS:
+				startActivity(new Intent(this, ShaftPreferenceActivity.class));
+				return true;
+			case MENU_TEST_NOTIFIER:
+				toggleTestNotifier();
+				return true;
+			case MENU_EXIT:
+				finish();
+				return true;
+		}
+
+		return super.onOptionsItemSelected(item);
 	}
 
 	private ServiceConnection onService = new ServiceConnection()
@@ -374,9 +439,11 @@ public class FirstResponder extends TabActivity
 
 		// Create see chat pop ups toggle button with cool green light
 
-		seeChatToggleButton = (ToggleButton) findViewById(R.id.see_chat);
-		seeChatToggleButton.setChecked(true);
-		seeChatToggleButton.setOnClickListener(onSeeChatToggleButtonClicked);
+		/*
+		 * seeChatToggleButton = (ToggleButton) findViewById(R.id.see_chat);
+		 * seeChatToggleButton.setChecked(true);
+		 * seeChatToggleButton.setOnClickListener(onSeeChatToggleButtonClicked);
+		 */
 
 	}
 
@@ -457,7 +524,8 @@ public class FirstResponder extends TabActivity
 		if (lastStreamAlert.containsKey(url))
 		{
 			// Do nothing...
-		} else
+		} 
+		else
 		{
 			lastStreamAlert.put(url, false);
 		}
@@ -485,7 +553,8 @@ public class FirstResponder extends TabActivity
 				if (streamBool)
 				{
 					// Do nothing.....
-				} else
+				} 
+				else
 				{
 					streamBool = true;
 					// setStream(stream); Let notifier handle this......
@@ -494,7 +563,8 @@ public class FirstResponder extends TabActivity
 							url);
 					enterNotificationID += 2;
 				}
-			} else if (streamBool)
+			}
+			else if (streamBool)
 			{
 				streamBool = false;
 				createLeaveNotification("Stream Leaving AOI",
@@ -664,21 +734,22 @@ public class FirstResponder extends TabActivity
 		Intent startSeinfeldIntent = new Intent(FirstResponder.this,
 				Seinfeld.class);
 
-/*		Bundle startFullScreenBundle = new Bundle();
-
-		startFullScreenBundle.putString(INTENT_KEY_FULLSCREEN, stream);*/
+		/*
+		 * Bundle startFullScreenBundle = new Bundle();
+		 * 
+		 * startFullScreenBundle.putString(INTENT_KEY_FULLSCREEN, stream);
+		 */
 		// startFullScreenBundle.putString( INTENT_KEY_FULLSCREEN,
 		// "/sdcard/test2.3gp" );
 
 		PendingIntent contentIntent = PendingIntent.getActivity(this, 0,
 				startSeinfeldIntent, 0);
-		
-		
+
 		notification.defaults = Notification.DEFAULT_ALL;
 		notification.flags = Notification.FLAG_AUTO_CANCEL;
 		notification.setLatestEventInfo(getApplicationContext(), title, text,
 				contentIntent);
-		
+
 		notifier.notify(intentID, notification);
 	}
 
@@ -772,8 +843,8 @@ public class FirstResponder extends TabActivity
 
 		startFullScreenBundle
 				.putString(INTENT_KEY_FULLSCREEN, video.toString());
-		startFullScreenBundle
-				.putStringArrayList(INTENT_KEY_CHAT_ARRAY, getButtonLabelList());
+		startFullScreenBundle.putStringArrayList(INTENT_KEY_CHAT_ARRAY,
+				getButtonLabelList());
 		// startFullScreenBundle.putString( INTENT_KEY_FULLSCREEN,
 		// "/sdcard/test2.3gp" );
 
@@ -931,24 +1002,35 @@ public class FirstResponder extends TabActivity
 
 	};
 
-	private Button.OnClickListener onSeeChatToggleButtonClicked = new Button.OnClickListener()
+	private void toggleTestNotifier()
 	{
-
-		public void onClick(View v)
+		if (showChatPopUps)
 		{
-			if (seeChatToggleButton.isChecked())
-			{
-				showChatPopUps = true;
-				createEnterNotification("Entering AOI...", "AOI Alert", "Stream entering AOI", enterNotificationID, "Stream");
-				//showOptionChatToggleButton.setChecked(true);
-			} else
-			{
-				showChatPopUps = false;
-				createLeaveNotification("Leaving AOI", "AOI Alert", "Stream leaving AOI", leaveNotificationID);
-				//showOptionChatToggleButton.setChecked(false);
-			}
+			showChatPopUps = false;
+			createEnterNotification("Entering AOI...", "AOI Alert",
+					"Stream entering AOI", enterNotificationID, "Stream");
+			// showOptionChatToggleButton.setChecked(true);
+		} else
+		{
+			showChatPopUps = true;
+			createLeaveNotification("Leaving AOI", "AOI Alert",
+					"Stream leaving AOI", leaveNotificationID);
+			// showOptionChatToggleButton.setChecked(false);
 		}
-	};
+	}
+
+	/*
+	 * private Button.OnClickListener onSeeChatToggleButtonClicked = new
+	 * Button.OnClickListener() {
+	 * 
+	 * public void onClick(View v) { if (seeChatToggleButton.isChecked()) {
+	 * showChatPopUps = true; createEnterNotification("Entering AOI...",
+	 * "AOI Alert", "Stream entering AOI", enterNotificationID, "Stream");
+	 * //showOptionChatToggleButton.setChecked(true); } else { showChatPopUps =
+	 * false; createLeaveNotification("Leaving AOI", "AOI Alert",
+	 * "Stream leaving AOI", leaveNotificationID);
+	 * //showOptionChatToggleButton.setChecked(false); } } };
+	 */
 
 	private Button.OnClickListener onFullScreenButtonClicked = new Button.OnClickListener()
 	{
@@ -1070,7 +1152,7 @@ public class FirstResponder extends TabActivity
 		}
 
 	};
-	
+
 	public ArrayList<String> getButtonLabelList()
 	{
 		ArrayList<String> buttonLabelList = new ArrayList<String>();
@@ -1081,7 +1163,7 @@ public class FirstResponder extends TabActivity
 		{
 			buttonLabelList.add(iterator.next().getText().toString());
 		}
-		
+
 		return buttonLabelList;
 	}
 
@@ -1425,12 +1507,31 @@ public class FirstResponder extends TabActivity
 		@Override
 		public void onReceive(Context context, Intent intent)
 		{
-			jsChatClientService.connect(CHAT_SERVER_URL, 6789, RestJsonClient
-					.getUser());
+			/*jsChatClientService.connect(CHAT_SERVER_URL, 6789, RestJsonClient
+					.getUser());*/
+			loginToChatServer();
+			
 		}
 
 	}
 
+	private void loginToChatServer()
+	{
+		Log.i("FirstResponder", "Logging into chat server");
+		Resources res = getResources();
+		
+		String chatServerKey = res.getString(R.string.chat_server_key);
+		String chatServerDefault = res.getString(R.string.chat_server_default);
+		String chatServerAddress = prefs.getString(chatServerKey, chatServerDefault);
+		String chatUser = RestJsonClient.getUser();
+		
+		jsChatClientService.connect(prefs.getString(res.getString(R.string.chat_server_key), 
+				res.getString(R.string.chat_server_default)), 
+				6789, 
+				RestJsonClient.getUser());
+		
+	}
+	
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data)
 	{

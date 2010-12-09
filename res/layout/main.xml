@@ -50,20 +50,21 @@
 
 					</RelativeLayout>
 
-					<ToggleButton
-						android:id="@+id/see_chat"
+					<!--
+						<ToggleButton android:id="@+id/see_chat"
 						android:layout_width="fill_parent"
 						android:layout_height="wrap_content"
 						android:layout_alignParentBottom="true"
 						android:textSize="@dimen/vert_button_text_size"
-						android:textOn="Chat Pop Ups: On"
-						android:textOff="Chat Pop Ups: Off" />
+						android:textOn="Notification Test: Leave"
+						android:textOff="Notification Test: Enter" />
+					-->
 
 					<LinearLayout
 						orientation="horizontal"
 						android:layout_width="fill_parent"
 						android:layout_height="wrap_content"
-						android:layout_above="@id/see_chat"
+						android:layout_alignParentBottom="true"
 					>
 
 						<Button
@@ -71,7 +72,7 @@
 							android:layout_width="fill_parent"
 							android:layout_height="wrap_content"
 							android:textSize="@dimen/vert_button_text_size"
-							android:text="AOI"
+							android:text="Area"
 							android:layout_weight="5" />
 
 						<Button

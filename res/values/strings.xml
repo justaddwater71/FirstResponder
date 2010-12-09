@@ -7,4 +7,14 @@
 <string name="menu_chat_pop_ups">&quot;Chat Pop Ups&quot;</string>
 <string name="menu_send_chat">&quot;Send Chat&quot;</string>
 <string name="menu_exit">&quot;Exit&quot;</string>
+<string name="menu_settings">&quot;Settings&quot;</string>
+<string name="menu_test_notifier">&quot;Test Notifier&quot;</string>
+<string name="shaft_server_key">&quot;shaft_server_key&quot;</string>
+<string name="shaft_server_title">&quot;S.H.A.F.T. Server&quot;</string>
+<string name="shaft_server_dialog">&quot;Choose your S.H.A.F.T. server&quot;</string>
+<string name="shaft_server_default">&quot;shuchton.heroku.com&quot;</string>
+<string name="chat_server_key">&quot;chat_server_key&quot;</string>
+<string name="chat_server_title">&quot;Chat Server&quot;</string>
+<string name="chat_server_dialog">&quot;Choose your chat server&quot;</string>
+<string name="chat_server_default">&quot;192.168.1.103&quot;</string>
 </resources>

@@ -18,6 +18,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
@@ -26,11 +27,11 @@ import android.widget.Toast;
 public class LoginActivity extends Activity implements OnClickListener
 {
 	/** Called when the activity is first created. */
-	private static final int SERVER_PORT = 80;
+	//private static final int SERVER_PORT = 80;
 
 	private static final String DEB_TAG = "Json_Android";
 
-	public static final String PREFS_NAME = "HelloAndroidPREFS";
+	public static final String PREFS_NAME = "preferences.xml";
 
 	private SharedPreferences settings;
 
@@ -130,7 +131,9 @@ public class LoginActivity extends Activity implements OnClickListener
 		// call the backend using Get parameters (discouraged but works good for
 		// this example ;) )
 
-		String address = "http://" + FirstResponderParameters.SERVER_HOST
+		Resources res = getResources();
+		//String address = "http://" + FirstResponderParameters.SERVER_HOST
+		String address = "http://" + settings.getString(res.getString(R.string.shaft_server_key), res.getString(R.string.shaft_server_default))
 				+ "/feeds.json";
 
 		if (usernameEditText == null || passwordEditText == null)

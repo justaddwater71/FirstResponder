@@ -42,6 +42,16 @@
 			android:textOn="Hide Grid"
 			android:textOff="Show Grid" />
 			
+		<ToggleButton
+			android:id="@+id/satelliteButton"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:layout_weight="1"
+			android:layout_gravity="center_vertical"
+			android:textOn="SAT"
+			android:textOff="SAT" />
+			
+			
 		<Button
 			android:id="@+id/doneButton"
 			android:layout_width="fill_parent"

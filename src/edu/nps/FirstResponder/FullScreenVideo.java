@@ -70,8 +70,6 @@ public class FullScreenVideo extends Activity
 		
 		try
 		{
-			
-
 			videoURIString = callingBundle
 					.getString(FirstResponder.INTENT_KEY_FULLSCREEN);
 			video = Uri.parse(videoURIString);
@@ -325,25 +323,32 @@ public class FullScreenVideo extends Activity
 
 	public void processChatMessage(String chatLine)
 	{
-		JSONObject json;
-		try
+		if (chatPopUps)
 		{
-			json = new JSONObject(chatLine);
-
-			String time = json.getString("time");
-
-			JSONObject jsonInner = new JSONObject(json.getString("message"));
-
-			String user = jsonInner.getString("user");
-			String room = jsonInner.getString("room");
-			String message = jsonInner.getString("message");
-
-			Toast.makeText(this, "Room: " + room + "\n " + user
-					+ ": " + message, Toast.LENGTH_SHORT).show();
-			
-		} catch (JSONException e)
+			JSONObject json;
+			try
+			{
+				json = new JSONObject(chatLine);
+	
+				String time = json.getString("time");
+	
+				JSONObject jsonInner = new JSONObject(json.getString("message"));
+	
+				String user = jsonInner.getString("user");
+				String room = jsonInner.getString("room");
+				String message = jsonInner.getString("message");
+	
+				Toast.makeText(this, "Room: " + room + "\n " + user
+						+ ": " + message, Toast.LENGTH_SHORT).show();
+				
+			} catch (JSONException e)
+			{
+				// Do nothing, it's just not that critical.....
+			}
+		}
+		else
 		{
-			// Do nothing, it's just not that critical.....
+			//Do nothing
 		}
 	}
 }
